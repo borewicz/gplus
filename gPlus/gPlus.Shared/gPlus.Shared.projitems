@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>2c60e2d5-9356-4926-93a4-2961d58d00b3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>gPlus</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Circles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Comments.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Converters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Events.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Location.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Notifications.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\oAuth.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Other.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\PostManagement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Posts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Squares.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Users.cs" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\LightGray.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\MediumGray.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\DarkGray.png" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\NavigationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\RelayCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableDictionary.cs" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-US\Resources.resw" />
+  </ItemGroup>
+</Project>

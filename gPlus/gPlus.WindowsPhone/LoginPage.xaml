@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="gPlus.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:gPlus"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" Height="200" VerticalAlignment="Center" Width="250">
+            <TextBlock TextWrapping="Wrap" Text="Log in" FontSize="24" TextAlignment="Center" Margin="0,0,0,20"/>
+            <TextBox x:Name="usernameTextBox" TextWrapping="Wrap" Margin="0,0,0,10" PlaceholderText="username" Text="kredens23@outlook.com"/>
+            <PasswordBox x:Name="passwordBox" Margin="0,0,0,10" PlaceholderText="password" Password="Dupa1234"/>
+            <AppBarButton HorizontalAlignment="Center" Icon="Accept" Label="" VerticalAlignment="Bottom" Height="70" Tapped="AppBarButton_Tapped"/>
+        </StackPanel>
+    </Grid>
+</Page>
