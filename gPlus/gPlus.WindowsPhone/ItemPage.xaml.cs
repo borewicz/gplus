@@ -1,4 +1,5 @@
 ﻿using gPlus.Common;
+using gPlus.Classes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,7 +69,9 @@ namespace gPlus
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             //var item = await SampleDataSource.GetItemAsync((string)e.NavigationParameter);
-            //this.DefaultViewModel["Item"] = item;
+            string parameter = e.NavigationParameter as string;
+            var post = await Posts.GetActivity(parameter);
+            this.DefaultViewModel["Item"] = post;
         }
 
         /// <summary>

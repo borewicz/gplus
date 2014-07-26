@@ -1,12 +1,18 @@
-﻿using gPlus.Common;
+﻿using gPlus.Classes;
+using gPlus.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,6 +20,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -23,10 +30,14 @@ namespace gPlus
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class NewPost : Page
+    public sealed partial class NewPost : Page, IFileOpenPickerContinuable
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        string reshareId, selectedEmoticon;
+        Location.Place place;
+        ObservableCollection<string> emoticons;
+        List<AclItem> items, selectedItems;
 
         public NewPost()
         {
@@ -65,8 +76,47 @@ namespace gPlus
         /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session.  The state will be null the first time a page is visited.</param>
-        private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
+        private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            //Other.info
+            reshareId = e.NavigationParameter as string;
+            items = new List<AclItem>();
+
+            items.Add(new AclItem(null, null, "Public", AclType.Public));
+            items.Add(new AclItem(null, null, "Your circles", AclType.YourCircles));
+            var circles = await Circles.GetCircles();
+            foreach (var c in circles)
+                items.Add(new AclItem(c.id, null, c.name, AclType.SpecifiedCircle));
+            //aclListBox.ItemsSource = items;
+            var squares = await Squares.GetSquares();
+            foreach (var c in squares)
+                items.Add(new AclItem(c.id, null, c.name, AclType.Square));
+            //squaresListBox.ItemsSource = await Squares.GetSquares();
+            aclItemFlyout.ItemsSource = items;
+            authorAvatar.Source = new BitmapImage(new Uri(Other.info.avatar));
+            authorName.Text = Other.info.name;
+            emoticons = new ObservableCollection<string>();
+            emoticons.Add("frustrated");
+            emoticons.Add("crying");
+            emoticons.Add("happy");
+            emoticons.Add("angry");
+            emoticons.Add("scared");
+            emoticons.Add("joy");
+            emoticons.Add("kiss");
+            emoticons.Add("lol");
+            emoticons.Add("meh");
+            emoticons.Add("sad");
+            emoticons.Add("sick");
+            emoticons.Add("silly");
+            emoticons.Add("smirk");
+            emoticons.Add("wink");
+            emoticons.Add("worried");
+            emoticons.Add("winter");
+            emoticons.Add("new_year");
+            emoticons.Add("valentines_day");
+            emoticons.Add("st_paddys_day");
+            emoticons.Add("spring");
+            //emoticonsComboBox.ItemsSource = emoticons;
         }
 
         /// <summary>
@@ -107,5 +157,108 @@ namespace gPlus
         }
 
         #endregion
+
+        private async void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            locationCheckBox.Content = "Locating...";
+            place = await Location.GetYourLocation();
+            locationCheckBox.Content = place.locationTag;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            place = null;
+            locationCheckBox.Content = "Include location";
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnItemsPicked(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+            selectedEmoticon = (string)sender.SelectedItem;
+        }
+
+        private void AppBarToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var picker = new ListPickerFlyout();
+            picker.ItemsSource = emoticons;
+            picker.SelectionMode = ListPickerFlyoutSelectionMode.Single;
+            //picker.ItemTemplate = (DataTemplate)Resources["PickerTemplate"];
+            picker.ItemsPicked += OnItemsPicked;
+            picker.ShowAt(this);
+        }
+
+        private void AppBarToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            selectedEmoticon = null;
+        }
+
+        private void AppBarToggleButton_Checked_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AppBarToggleButton_Unchecked_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            var result = await PostManagement.PostActivity(contentTextBox.Text, selectedItems, null, selectedEmoticon, reshareId, place);
+        }
+
+        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void OnAclItemsPicked(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+
+            //}
+        }
+
+        private void ListPickerFlyout_ItemsPicked(ListPickerFlyout sender, ItemsPickedEventArgs args)
+        {
+            selectedItems = new List<AclItem>();
+            foreach (AclItem item in sender.SelectedItems)
+            {
+                selectedItems.Add(item);
+            }
+        }
+
+        private void AppBarToggleButton_Checked_2(object sender, RoutedEventArgs e)
+        {
+            var openPicker = new FileOpenPicker
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+                ViewMode = PickerViewMode.Thumbnail,
+            };
+
+            // Filter to include a sample subset of file types.
+            openPicker.FileTypeFilter.Clear();
+            openPicker.FileTypeFilter.Add(".png");
+            openPicker.FileTypeFilter.Add(".jpeg");
+            openPicker.FileTypeFilter.Add(".jpg");
+            PickImage(openPicker);
+        }
+
+        private void PickImage(FileOpenPicker openPicker)
+        {
+            openPicker.PickSingleFileAndContinue();
+        }
+
+        public void ContinueFileOpenPicker(FileOpenPickerContinuationEventArgs args)
+        {
+            var file = args.Files.FirstOrDefault();
+            Debug.WriteLine("super");
+            if (file == null)
+                return;
+        }
+
     }
 }

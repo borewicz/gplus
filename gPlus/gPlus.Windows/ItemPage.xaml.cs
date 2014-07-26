@@ -1,5 +1,4 @@
-﻿using gPlus.Data;
-using gPlus.Common;
+﻿using gPlus.Common;
 
 using System;
 using System.Collections.Generic;
@@ -66,8 +65,8 @@ namespace gPlus
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
-            var item = await SampleDataSource.GetItemAsync((string)e.NavigationParameter);
-            this.DefaultViewModel["Item"] = item;
+            //var item = await SampleDataSource.GetItemAsync((string)e.NavigationParameter);
+            //this.DefaultViewModel["Item"] = item;
         }
 
         #region NavigationHelper registration

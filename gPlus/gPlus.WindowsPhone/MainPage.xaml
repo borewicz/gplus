@@ -68,7 +68,7 @@
     </Page.Resources>
 	<Page.BottomAppBar>
 		<CommandBar>
-			<AppBarButton Icon="Edit" Label="new post"/>
+			<AppBarButton Icon="Edit" Label="new post" Click="AppBarButton_Click"/>
 			<AppBarButton x:Name="notificationAppBarButton" Label="notifications">
 				<AppBarButton.Icon>
 					<FontIcon Glyph="0"/>
@@ -85,7 +85,7 @@
                     <ListView
                         ItemsSource="{Binding}"
                         IsItemClickEnabled="True"
-                        ItemClick="GroupSection_ItemClick"
+                        
                         ContinuumNavigationTransitionInfo.ExitElementContainer="True">
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -110,7 +110,7 @@
                         ItemTemplate="{StaticResource Standard200x180TileItemTemplate}"
                         SelectionMode="None"
                         IsItemClickEnabled="True"
-                        ItemClick="ItemView_ItemClick"
+                        ItemClick="squaresItemClick"
                         ContinuumNavigationTransitionInfo.ExitElementContainer="True">
                         <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -130,7 +130,7 @@
                         SelectionMode="None"
                         IsItemClickEnabled="True"
                         ItemsSource="{Binding }"
-                        ItemClick="ItemView_ItemClick"
+                        ItemClick="circlesItemClick"
                         ContinuumNavigationTransitionInfo.ExitElementContainer="True">
                         <ListView.ItemTemplate>
                             <DataTemplate>

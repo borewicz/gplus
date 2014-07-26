@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -44,6 +45,11 @@ namespace gPlus
             Other.info = await Other.getInfo();
             if (Other.info != null)
                 this.Frame.Navigate(typeof(MainPage));
+            else
+            {
+                var dialog = new MessageDialog("Cannot into. Contact with developer.");
+                await dialog.ShowAsync();
+            }
         }
     }
 }

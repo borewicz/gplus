@@ -129,16 +129,18 @@ namespace gPlus
         /// </summary>
         /// <param name="sender">The source of the click event.</param>
         /// <param name="e">Defaults about the click event.</param>
-        private void ItemView_ItemClick(object sender, ItemClickEventArgs e)
+        private void circlesItemClick(object sender, ItemClickEventArgs e)
         {
-            /*
-            var itemId = ((SampleDataItem)e.ClickedItem).UniqueId;
-            if (!Frame.Navigate(typeof(ItemPage), itemId))
-            {
-                throw new Exception(this.resourceLoader.GetString("NavigationFailedExceptionMessage"));
-            }
-             */
+            var id = ((Circles.Circle)e.ClickedItem).id;
+            this.Frame.Navigate(typeof(PostsPage), id);
         }
+
+        private void squaresItemClick(object sender, ItemClickEventArgs e)
+        {
+            var id = ((Squares.Square)e.ClickedItem).id;
+            this.Frame.Navigate(typeof(PostsPage), "SQUARE:" + id);
+        }
+
 
         #region NavigationHelper registration
 
@@ -165,5 +167,10 @@ namespace gPlus
         }
 
         #endregion
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(NewPost), null);
+        }
     }
 }

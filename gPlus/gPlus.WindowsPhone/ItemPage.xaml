@@ -16,6 +16,8 @@
 				<AppBarButton Label="remove"/>
 				<AppBarButton Label="report"/>
 			</CommandBar.SecondaryCommands>
+			<AppBarToggleButton Label="+1" Icon="Add"/>
+			<AppBarButton Icon="ReShare" Label="reshare"/>
 		</CommandBar>
 	</Page.BottomAppBar>
     <Page.Transitions>
@@ -37,11 +39,57 @@
 
             <Pivot>
                 <PivotItem Header="post" >
-                <Grid>
-                </Grid>
-                </PivotItem>
-                <PivotItem Header="comments" />
-            </Pivot>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,9.5,0,0" Width="79" Height="79">
+                            <Image Source="{Binding avatar}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="14.5,0,0,0">
+                            <TextBlock Text="{Binding author}" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
+                            <TextBlock Text="{Binding time}" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock Text="{Binding content}" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}" Margin="0,0,15,0">
+                            <Run Text="+" />
+                            <Run Text="{Binding plusCount}" />
+                        </TextBlock >
+                        <TextBlock Text="{Binding reshareCount}" Margin="0,0,15,0" Style="{ThemeResource ListViewItemSubheaderTextBlockStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </PivotItem>
+            <PivotItem Header="comments">
+                <ListView
+            x:Name="itemListView"
+            AutomationProperties.AutomationId="ItemListView"
+            AutomationProperties.Name="Items In Group"
+            TabIndex="1"
+            Grid.Row="1"
+            ItemsSource="{Binding comments}"
+            IsItemClickEnabled="True"
+            SelectionMode="None"
+            IsSwipeEnabled="false"
+            Margin="19,0,0,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,9.5,0,0" Width="79" Height="79">
+                                        <Image Source="{Binding avatar}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="14.5,0,0,0">
+                                        <TextBlock Text="{Binding author}" Style="{ThemeResource ListViewItemTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding time}" Style="{ThemeResource ListViewItemContentTextBlockStyle}" Foreground="{ThemeResource PhoneMidBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock Text="{Binding text}" Style="{ThemeResource ListViewItemContentTextBlockStyle}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+        </Pivot>
 
     </Grid>
 </Page>

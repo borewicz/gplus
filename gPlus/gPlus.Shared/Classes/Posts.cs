@@ -28,7 +28,7 @@ namespace gPlus.Classes
                 public string thumbImage { get; set; }
             }
             public class Comment {
-                public string authorName { get; set; }
+                public string author { get; set; }
                 public string text { get; set; }
                 public string time { get; set; }
                 public string avatar { get; set; }
@@ -167,7 +167,7 @@ namespace gPlus.Classes
             foreach (var c in result["comment"])
             {
                 Post.Comment comment = new Post.Comment();
-                comment.authorName = (string)c["authorName"];
+                comment.author = (string)c["authorName"];
                 comment.userID = (string)c["obfuscatedId"];
                 comment.commentID = (string)c["commentId"];
                 comment.text = (string)c["text"];

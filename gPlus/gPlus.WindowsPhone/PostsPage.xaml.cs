@@ -1,5 +1,5 @@
-﻿using gPlus.Common;
-
+﻿using gPlus.Classes;
+using gPlus.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,12 +25,13 @@ namespace gPlus
     /// A page that displays an overview of a single group, including a preview of the items
     /// within the group.
     /// </summary
-    public sealed partial class SectionPage : Page
+    public sealed partial class PostsPage : Page
     {
         private readonly NavigationHelper navigationHelper;
         private readonly ObservableDictionary defaultViewModel = new ObservableDictionary();
+        Posts.PostStream posts;
 
-        public SectionPage()
+        public PostsPage()
         {
             this.InitializeComponent();
 
@@ -70,8 +71,21 @@ namespace gPlus
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             // TODO: Create an appropriate data model for your problem domain to replace the sample data.
-            //var group = await SampleDataSource.GetGroupAsync((string)e.NavigationParameter);
-            //this.DefaultViewModel["Group"] = group;
+            posts = new Posts.PostStream();
+            string parameter = e.NavigationParameter as string;
+            if (parameter.Contains(":"))
+            {
+                string id = (e.NavigationParameter as string).Split(':')[1];
+
+                if (parameter.Split(':')[0] == "SQUARE")
+                    posts = await Posts.GetActivities(null, null, parameter.Split(':')[1]);
+                else if (parameter.Split(':')[0] == "USER")
+                    posts = await Posts.GetActivities(parameter.Split(':')[1], null, null);
+            }
+            else
+                posts = await Posts.GetActivities(null, parameter, null);
+            this.DefaultViewModel["Items"] = posts.posts;
+
         }
 
         /// <summary>
@@ -95,7 +109,7 @@ namespace gPlus
         private void ItemView_ItemClick(object sender, ItemClickEventArgs e)
         {
             //var itemId = ((SampleDataItem)e.ClickedItem).UniqueId;
-            Frame.Navigate(typeof(ItemPage), null);
+            Frame.Navigate(typeof(ItemPage), (e.ClickedItem as Posts.Post).postID);
             //{
             //    var resourceLoader = ResourceLoader.GetForCurrentView("Resources");
             //    throw new Exception(resourceLoader.GetString("NavigationFailedExceptionMessage"));

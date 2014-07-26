@@ -25,8 +25,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Other.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\PostManagement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Posts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\Search.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Squares.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\Users.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ContinuationManager.cs" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\LightGray.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\MediumGray.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\DarkGray.png" />

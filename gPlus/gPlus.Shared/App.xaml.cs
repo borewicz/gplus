@@ -29,7 +29,9 @@ namespace gPlus
 #if WINDOWS_PHONE_APP
         private TransitionCollection transitions;
 #endif
-
+#if WINDOWS_PHONE_APP
+        ContinuationManager continuationManager;
+#endif
         /// <summary>
         /// Initializes the singleton instance of the <see cref="App"/> class. This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -143,5 +145,25 @@ namespace gPlus
             await SuspensionManager.SaveAsync();
             deferral.Complete();
         }
+
+#if WINDOWS_PHONE_APP
+        protected override void OnActivated(IActivatedEventArgs e)
+        {
+            base.OnActivated(e);
+
+            continuationManager = new ContinuationManager();
+
+            var continuationEventArgs = e as IContinuationActivatedEventArgs;
+            if (continuationEventArgs == null)
+                return;
+
+            var frame = Window.Current.Content as Frame;
+            if (frame != null)
+            {
+                // Call ContinuationManager to handle continuation activation
+                continuationManager.Continue(continuationEventArgs, frame);
+            }
+        }
+#endif  
     }
 }
