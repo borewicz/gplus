@@ -75,7 +75,7 @@ namespace gPlus.Classes
             return new string(chars);
         }
 
-        static async Task<JObject> buildPost(string content, List<AclItem> list, string link, string emoticon, string reshareId, Location.Place place)
+        static async Task<JObject> buildPost(string content, List<AclItem> list, string link, string emoticon, string reshareId, Location.Place place, string imageContent)
         {
             JObject json = new JObject(
                 new JProperty("updateText", content),
@@ -132,6 +132,25 @@ namespace gPlus.Classes
                     new JProperty("locationTag", place.locationTag),
                     new JProperty("longitudeE7", place.longitude));
             }
+            if (imageContent != null)
+            {
+                /*
+                 * "imageStatus":"1",
+"mediaType":"1",
+"timestamp":-{"creationTimestampMs":1.406375684079E12
+}
+*/
+                json["photosShareData"] = new JObject(
+                    new JProperty("mediaRef", new JArray(
+                        new JObject(
+                            new JProperty("clientAssignedUniqueId", "cs_01_" + PasswordGenerator(32, false)),
+                            new JProperty("imageData", imageContent),
+                            new JProperty("imageStatus", "1"),
+                            new JProperty("mediaType", "1")
+                            )
+                            )
+                            ));
+            }
             return json;
         }
 
@@ -161,14 +180,14 @@ namespace gPlus.Classes
         }
 		
 
-        public static async Task<int> PostActivity(string text, List<AclItem> aclItems, string link, string emoticon, string reshareId, Location.Place place)
+        public static async Task<int> PostActivity(string text, List<AclItem> aclItems, string link, string emoticon, string reshareId, Location.Place place, string imageContent)
         {
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
             client.DefaultRequestHeaders.Add("User-Agent", "google-oauth-playground");
 
             //string postData = "{\"activityId\":\"" + activityID + "\"}"; 
-            HttpContent content = new StringContent((await buildPost(text, aclItems, link, emoticon, reshareId, place)).ToString());
+            HttpContent content = new StringContent((await buildPost(text, aclItems, link, emoticon, reshareId, place, imageContent)).ToString());
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(POSTACTIVITY_API), content);
             Debug.WriteLine(await response.Content.ReadAsStringAsync());

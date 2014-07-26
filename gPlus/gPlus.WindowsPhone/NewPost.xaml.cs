@@ -13,6 +13,8 @@ using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -38,6 +40,7 @@ namespace gPlus
         Location.Place place;
         ObservableCollection<string> emoticons;
         List<AclItem> items, selectedItems;
+        string imageContent;
 
         public NewPost()
         {
@@ -171,11 +174,6 @@ namespace gPlus
             locationCheckBox.Content = "Include location";
         }
 
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void OnItemsPicked(ListPickerFlyout sender, ItemsPickedEventArgs args)
         {
             selectedEmoticon = (string)sender.SelectedItem;
@@ -196,30 +194,21 @@ namespace gPlus
             selectedEmoticon = null;
         }
 
-        private void AppBarToggleButton_Checked_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void AppBarToggleButton_Unchecked_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
         {
-            var result = await PostManagement.PostActivity(contentTextBox.Text, selectedItems, null, selectedEmoticon, reshareId, place);
-        }
-
-        private void Button_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-
-        }
-
-        private void OnAclItemsPicked(ListPickerFlyout sender, ItemsPickedEventArgs args)
-        {
-
-            //}
+            var result = await PostManagement.PostActivity(contentTextBox.Text, selectedItems, null, selectedEmoticon, reshareId, place, imageContent);
+            if (result == 0)
+            {
+                if (this.Frame.CanGoBack)
+                {
+                    this.Frame.GoBack();
+                }
+            }
+            else
+            {
+                var messageDialog = new MessageDialog("Cannot into. Contact with developer.");
+                await messageDialog.ShowAsync();
+            }
         }
 
         private void ListPickerFlyout_ItemsPicked(ListPickerFlyout sender, ItemsPickedEventArgs args)
@@ -252,12 +241,13 @@ namespace gPlus
             openPicker.PickSingleFileAndContinue();
         }
 
-        public void ContinueFileOpenPicker(FileOpenPickerContinuationEventArgs args)
+        public async void ContinueFileOpenPicker(FileOpenPickerContinuationEventArgs args)
         {
             var file = args.Files.FirstOrDefault();
             Debug.WriteLine("super");
             if (file == null)
                 return;
+            imageContent = await Other.StorageFileToBase64(file);
         }
 
     }

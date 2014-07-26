@@ -2,6 +2,7 @@
 using gPlus.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -171,6 +172,12 @@ namespace gPlus
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(NewPost), null);
+        }
+
+        private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            var posts = await Posts.QueryPost("XD", "BEST");
+            Debug.WriteLine(posts);
         }
     }
 }

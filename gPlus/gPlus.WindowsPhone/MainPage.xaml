@@ -74,7 +74,7 @@
 					<FontIcon Glyph="0"/>
 				</AppBarButton.Icon>
 			</AppBarButton>
-			<AppBarButton Icon="Find" Label="find"/>
+			<AppBarButton Icon="Find" Label="find" Click="AppBarButton_Click_1" />
 		</CommandBar>
 	</Page.BottomAppBar>
 
@@ -90,7 +90,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,0,0,27.5">
-                                    <TextBlock Text="{Binding Title}" Style="{ThemeResource ListViewItemTextBlockStyle}" />
+                                    <!--<TextBlock Text="{Binding Title}" Style="{ThemeResource ListViewItemTextBlockStyle}" />-->
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

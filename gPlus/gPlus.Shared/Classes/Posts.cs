@@ -17,6 +17,7 @@ namespace gPlus.Classes
         const string ACTIVITIES_API = HOST + "/plusi/v2/ozInternal/getactivities";
         public const string ACTIVITY_API = HOST + "/plusi/v2/ozInternal/getactivity";
         public const string POSTACTIVITY_API = HOST + "/plusi/v2/ozInternal/postactivity";
+        const string SEARCH_API = HOST + "/plusi/v2/ozInternal/searchquery";
 
         public class Post
         {
@@ -305,6 +306,61 @@ namespace gPlus.Classes
             {
                 JObject result = JObject.Parse(await response.Content.ReadAsStringAsync());
                 return _parsePost(result["update"]);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static async Task<PostStream> QueryPost(string queryText, string sort)
+        {
+            PostStream posts = new PostStream();
+            posts.posts = new ObservableCollection<Post>();
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
+            //client.DefaultRequestHeaders.Add("User-Agent", "com.google.android.apps.plus/411514804 (Linux; U; Android 4.1.2; pl_PL; IdeaTabA1000L-F; Build/JZO54K); G+ SDK");
+            JObject json = new JObject(
+                //new JProperty("activityRequestData", new JObject(
+                //    new JProperty("activityFilters", new JObject(
+                //        new JProperty("fieldRequestOptions", new JObject(
+                //            new JProperty("includeEmbedsData", true),
+                //            new JProperty("includeLegacyMediaData", false)
+                //        )),
+                        //new JProperty("skipCommentCollapsing", true)
+//                        new JProperty("updateFilter", new JObject(
+//                            new JProperty("includeNamespace", new JArray(
+//                                "STREAM",
+//                                "EVENT",
+//                                "SEARCH",
+//                                "PLUSONE",
+//                                "PHOTO",
+//                                "A2A",
+//                                "BIRTHDAY",
+//                                "PHOTOS_ADDED_TO_EVENT"
+//]
+
+//                    )
+                //))),
+                new JProperty("searchQuery", new JObject(
+                    new JProperty("sort", sort),
+                    new JProperty("queryText", queryText),
+                    new JProperty("filter", "TACOS")
+                )
+            ));
+            HttpContent content = new StringContent(json.ToString());
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = await client.PostAsync(new Uri(SEARCH_API), content);
+            Debug.WriteLine(await response.Content.ReadAsStringAsync());
+            if (response.IsSuccessStatusCode == true)
+            {
+                JObject result = JObject.Parse(await response.Content.ReadAsStringAsync());
+                foreach (var i in result["results"]["activityResults"]["stream"]["update"])
+                {
+                    posts.posts.Add(_parsePost(i));
+                }
+                posts.pageToken = (string)result["results"]["activityResults"]["stream"]["continuationToken"];
+                return posts;
             }
             else
             {
