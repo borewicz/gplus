@@ -15,10 +15,10 @@
     </Page.Resources>
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton Icon="Accept" Label="ok" Click="AppBarButton_Click_1"/>
-            <AppBarToggleButton Icon="Camera" Label="camera" Checked="AppBarToggleButton_Checked_2"/>
-            <AppBarToggleButton Label="mood" Icon="Emoji2" Checked="AppBarToggleButton_Checked" Unchecked="AppBarToggleButton_Unchecked"/>
-            <AppBarToggleButton Icon="Link" Label="link" Checked="AppBarToggleButton_Checked_1" Unchecked="AppBarToggleButton_Unchecked_1"/>
+            <AppBarButton Icon="Accept" Label="ok" Click="AppBarButton_Click_1" />
+            <AppBarToggleButton Icon="Camera" Label="camera" Checked="AppBarToggleButton_Checked_2" x:Name="cameraButton"/>
+            <AppBarToggleButton Label="mood" Icon="Emoji2" Checked="AppBarToggleButton_Checked" Unchecked="AppBarToggleButton_Unchecked" x:Name="moodButton"/>
+            <AppBarToggleButton Icon="Link" Label="link" Checked="AppBarToggleButton_Checked_1" Unchecked="AppBarToggleButton_Unchecked_1" x:Name="linkButton"/>
         </CommandBar>
     </Page.BottomAppBar>
 
@@ -84,7 +84,6 @@
                 <TextBox x:Name="contentTextBox" Grid.Row="1" Margin="0" TextWrapping="Wrap" VerticalAlignment="Stretch" AcceptsReturn="True" PlaceholderText="enter text"/>
                 <StackPanel Grid.Row="2">
                     <CheckBox x:Name="locationCheckBox" Content="Include location" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
-                    <TextBox Text="http://" Visibility="Collapsed" x:Name="linkTextBox"/>
                 </StackPanel>
 
             </Grid>

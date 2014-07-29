@@ -81,7 +81,7 @@ namespace gPlus
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             //var sampleDataGroups = await SampleDataSource.GetGroupsAsync();
             //this.DefaultViewModel["Groups"] = sampleDataGroups;
-            var posts = await Posts.GetActivities(null, null, null);
+            //var posts = await Posts.GetActivities(null, null, null);
             //FontIcon icon = new FontIcon();
             //icon.Glyph = (await Notifications.GetNotificationCount()).ToString();
             //notificationAppBarButton.Icon = icon;
@@ -178,6 +178,11 @@ namespace gPlus
         {
             var posts = await Posts.QueryPost("XD", "BEST");
             Debug.WriteLine(posts);
+        }
+
+        private void notificationAppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(NotificationsPage), null);
         }
     }
 }

@@ -69,7 +69,7 @@
 	<Page.BottomAppBar>
 		<CommandBar>
 			<AppBarButton Icon="Edit" Label="new post" Click="AppBarButton_Click"/>
-			<AppBarButton x:Name="notificationAppBarButton" Label="notifications">
+			<AppBarButton x:Name="notificationAppBarButton" Label="notifications" Click="notificationAppBarButton_Click">
 				<AppBarButton.Icon>
 					<FontIcon Glyph="0"/>
 				</AppBarButton.Icon>

@@ -72,7 +72,7 @@ namespace gPlus.Classes
             events.start = (string)eventData["startDate"];
             events.end = (string)eventData["endDate"];
             events.userID = (string)eventData["ownerObfuscatedId"];
-            if (eventData["location"].HasValues)
+            if ((eventData["location"] != null) && (eventData["location"].HasValues))
             {
                 events.latitude = (string)eventData["location"]["placeV2"]["geo"]["geoCoordinatesV2"]["latitude"];
                 events.longitude = (string)eventData["location"]["placeV2"]["geo"]["geoCoordinatesV2"]["longitude"];

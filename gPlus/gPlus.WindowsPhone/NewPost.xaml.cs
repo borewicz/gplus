@@ -177,6 +177,8 @@ namespace gPlus
         private void OnItemsPicked(ListPickerFlyout sender, ItemsPickedEventArgs args)
         {
             selectedEmoticon = (string)sender.SelectedItem;
+            cameraButton.IsChecked = false;
+            linkButton.IsChecked = false;
         }
 
         private void AppBarToggleButton_Checked(object sender, RoutedEventArgs e)
@@ -248,6 +250,8 @@ namespace gPlus
             if (file == null)
                 return;
             imageContent = await Other.StorageFileToBase64(file);
+            moodButton.IsChecked = false;
+            linkButton.IsChecked = false;
         }
         
         private async void AppBarToggleButton_Checked_1(object sender, RoutedEventArgs e)
@@ -283,6 +287,8 @@ namespace gPlus
             if (result == ContentDialogResult.Primary)
             {
                 link = box.Text;
+                cameraButton.IsChecked = false;
+                moodButton.IsChecked = false;
             }
             else
             {
