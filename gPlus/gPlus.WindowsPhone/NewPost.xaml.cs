@@ -36,11 +36,11 @@ namespace gPlus
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        string reshareId, selectedEmoticon;
+        string reshareId, selectedEmoticon, link, imageContent;
         Location.Place place;
         ObservableCollection<string> emoticons;
         List<AclItem> items, selectedItems;
-        string imageContent;
+        //string imageContent;
 
         public NewPost()
         {
@@ -196,7 +196,7 @@ namespace gPlus
 
         private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
         {
-            var result = await PostManagement.PostActivity(contentTextBox.Text, selectedItems, null, selectedEmoticon, reshareId, place, imageContent);
+            var result = await PostManagement.PostActivity(contentTextBox.Text, selectedItems, link, selectedEmoticon, reshareId, place, imageContent);
             if (result == 0)
             {
                 if (this.Frame.CanGoBack)
@@ -248,6 +248,53 @@ namespace gPlus
             if (file == null)
                 return;
             imageContent = await Other.StorageFileToBase64(file);
+        }
+        
+        private async void AppBarToggleButton_Checked_1(object sender, RoutedEventArgs e)
+        {
+            StackPanel panel = new StackPanel();
+
+            InputScope scope = new InputScope();
+            InputScopeName name = new InputScopeName();
+            name.NameValue = InputScopeNameValue.Url;
+            scope.Names.Add(name);
+            TextBox box = new TextBox()
+            {
+                //Margin = new Thickness(0, 14, 0, -2)
+                InputScope = scope,
+                Text = "http://"
+            };
+            TextBlock block = new TextBlock()
+            {
+                Text = "Tap OK to continue."
+            };
+
+            panel.Children.Add(block);
+            panel.Children.Add(box);
+            var dlg = new ContentDialog()
+            {
+                Title = "Link",
+                Content = panel,
+                PrimaryButtonText = "ok",
+                SecondaryButtonText = "cancel"
+            };
+
+            var result = await dlg.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                link = box.Text;
+            }
+            else
+            {
+                link = null;
+                (sender as AppBarToggleButton).IsChecked = false;
+            }
+            Debug.WriteLine(result == ContentDialogResult.Primary ? "YES" : "No");
+        }
+
+        private void AppBarToggleButton_Unchecked_1(object sender, RoutedEventArgs e)
+        {
+            link = null;
         }
 
     }

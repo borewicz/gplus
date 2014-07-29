@@ -18,7 +18,7 @@
             <AppBarButton Icon="Accept" Label="ok" Click="AppBarButton_Click_1"/>
             <AppBarToggleButton Icon="Camera" Label="camera" Checked="AppBarToggleButton_Checked_2"/>
             <AppBarToggleButton Label="mood" Icon="Emoji2" Checked="AppBarToggleButton_Checked" Unchecked="AppBarToggleButton_Unchecked"/>
-            <AppBarToggleButton Icon="Link" Label="link"/>
+            <AppBarToggleButton Icon="Link" Label="link" Checked="AppBarToggleButton_Checked_1" Unchecked="AppBarToggleButton_Unchecked_1"/>
         </CommandBar>
     </Page.BottomAppBar>
 
