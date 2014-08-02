@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using gPlus.Common;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Activation;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 
@@ -19,10 +21,7 @@ namespace gPlus.Classes
         const string OAUTH_URI = "https://accounts.google.com/o/oauth2/auth";
         const string SCOPE = "https://www.googleapis.com/auth/plus.me+https://www.googleapis.com/auth/plus.stream.read+https://www.googleapis.com/auth/plus.stream.write+https://www.googleapis.com/auth/plus.circles.write+https://www.googleapis.com/auth/plus.circles.read+https://www.googleapis.com/auth/plus.photos.readwrite";
 
-        static string access_token;
-        static string username = "kredens23@gmail.com";
-        static string password = "Dupa1234";
-
+        static string access_token, username, token, password, stepToken;
 
         static string GetAuthUri()
         {
@@ -51,39 +50,69 @@ namespace gPlus.Classes
             return code;
         }
 
-        public static void setCredentials(string username, string password)
+        public static void setStepToken(string stepToken)
         {
-            ApplicationData.Current.LocalSettings.Values["username"] = username;
+            oAuth.stepToken = stepToken;
+            token = null;
+        }
+
+        public static void setCredentials(string username, string password, string token)
+        {
+            if (username != null || password != null)
+            {
+                oAuth.username = username;
+                oAuth.password = password;
+            }
+            oAuth.token = token;
+        }
+
+        public static void saveCredentials(string username, string password, string token)
+        {
+            ApplicationData.Current.LocalSettings.Values["token"] = token;
             ApplicationData.Current.LocalSettings.Values["password"] = password;
+            ApplicationData.Current.LocalSettings.Values["username"] = username;
+            ApplicationData.Current.LocalSettings.Values["stepToken"] = stepToken;
+        }
+
+        public static void clearCredentials()
+        {
+            ApplicationData.Current.LocalSettings.Values["token"] = null;
+            ApplicationData.Current.LocalSettings.Values["password"] = null;
+            ApplicationData.Current.LocalSettings.Values["username"] = null;
+            ApplicationData.Current.LocalSettings.Values["stepToken"] = null;
+            token = username = password = access_token = stepToken = null;
         }
 
         public async static Task<string> GetAccessToken()
         {
             if (access_token != null)
                 return access_token;
+            //clearCredentials();
 
-            var settings = ApplicationData.Current.LocalSettings;
-            string token = "";
+            //var settings = ApplicationData.Current.LocalSettings;
+            //string token = "";
 
             //var tokenValue = settings.Values["token"];
-            object tokenValue = null;
-            var username = settings.Values["username"];
-            var password = settings.Values["password"];
+            //object tokenValue = null;
+            //var username = settings.Values["username"];
+            //var password = settings.Values["password"];
 
-            if ((username == null) || (password == null))
-            {
+            //if ((username == null) || (password == null))
+            //{
                 //tutaj pytaj o usera i hasło
-                //ApplicationData.Current.LocalSettings.Values["username"] = "kredens23@outlook.com";
-                //ApplicationData.Current.LocalSettings.Values["password"] = "Dupa1234";
-            }
-            if (tokenValue == null)
+            //}
+            if (oAuth.token == null || oAuth.stepToken != null)
             {
-                token = await getToken((string)username, (string)password);
-                if (token != null)
-                    ApplicationData.Current.LocalSettings.Values["token"] = (string)token;
-                else
+                oAuth.token = await getToken((string)username, (string)password);
+                if (oAuth.token.Contains("ContinueSignIn"))
+                    return oAuth.token;
+                else if (oAuth.token == null)
+                //    ApplicationData.Current.LocalSettings.Values["token"] = (string)token;
+                //else`
                     return null;
             }
+            //saveCredentials(oAuth.username, oAuth.password, oAuth.token);
+
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "GoogleLoginService/1.3");
 
@@ -111,6 +140,7 @@ namespace gPlus.Classes
                     .ToDictionary(y => y[0], y => y[1]);
                 //return values["Auth"];
                 access_token = values["Auth"];
+                saveCredentials(access_token, password, token);
                 return access_token;
             }
             else
@@ -123,17 +153,21 @@ namespace gPlus.Classes
             client.DefaultRequestHeaders.Add("User-Agent", "GoogleLoginService/1.3");
 
             string postData = "accountType=HOSTED_OR_GOOGLE" +
-               "&Email=" + username +
                 //"&has_permission=1" + 
                "&add_account=1" +
                 //"&EncryptedPasswd=" + encrypt(username, password) + 
-               "&Passwd=" + password +
                "&service=ac2dm" +
                "&source=android" +
                "&androidId=31e0e7f6a1fa7484" +
                 //"&device_country=pl" + 
                 //"&operatorCountry=pl" + 
                "&lang=pl";// + 
+            if (stepToken == null)
+                postData += "&Email=" + username +
+               "&Passwd=" + password;
+            else
+                postData += "&Token=" + stepToken +
+                    "&ACCESS_TOKEN=1";
             //"&sdk_version=16";
             //string postData = "{\"activityId\":\"" + activityID + "\"}"; 
             HttpContent content = new StringContent(postData);
@@ -145,17 +179,44 @@ namespace gPlus.Classes
             if (response.IsSuccessStatusCode == true)
             {
                 string result = await response.Content.ReadAsStringAsync();
-                //result = result.Replace("\n", "&\n");
+                foreach (var s in result.Split('\n'))
+                {
+                    var key = s.Split('=');
+                    if (key[0] == "Token")
+                        return key[1];
+                }
+                return null;
+                /*
                 Dictionary<string, string> values =
                     result.Split('\n')
                     .Select(x => x.Split('='))
                     .ToDictionary(y => y[0], y => y[1]);
                 //return await _getAuthVar(username, values["Token"]);
                 return values["Token"];
+                 */
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                string result = await response.Content.ReadAsStringAsync();
+                foreach (var x in result.Split('\n'))
+                {
+                    //Debug.WriteLine(x);
+                    if (x.Split(new char[] { '=' }, 2)[0] == "Url")
+                        return x.Split(new char[] { '=' }, 2)[1];
+                }
+                return null;
+                /*
+                Dictionary<string, string> values =
+                    result.Split('\n')
+                    .Select(x => x.Split(new char[] { '=' }, 2))
+                    .ToDictionary(y => y[0], y => y[1]);
+                return values["Url"];
+                 */
             }
             else
                 return null;
         }
+
 
         public async static Task<string> getPlaygroundAccessToken() //DEPR coś tam
         {

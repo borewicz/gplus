@@ -84,17 +84,21 @@ namespace gPlus.Classes
             if (response.IsSuccessStatusCode == true)
             {
                 var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-                foreach (var s in result["joinedSquare"])
+                try
                 {
-                    Square square = new Square();
-                    square.id = (string)s["viewerSquare"]["square"]["obfuscatedGaiaId"];
-                    square.name = (string)s["viewerSquare"]["square"]["profile"]["name"];
-                    square.tagline = (string)s["viewerSquare"]["square"]["profile"]["tagline"];
-                    square.description = (string)s["viewerSquare"]["square"]["profile"]["aboutText"];
-                    square.avatar = "https:" + (string)s["viewerSquare"]["square"]["profile"]["photoUrl"];
-                    square.memberCount = (int)s["viewerSquare"]["squareMemberStats"]["memberCount"];
-                    squares.Add(square);
+                    foreach (var s in result["joinedSquare"])
+                    {
+                        Square square = new Square();
+                        square.id = (string)s["viewerSquare"]["square"]["obfuscatedGaiaId"];
+                        square.name = (string)s["viewerSquare"]["square"]["profile"]["name"];
+                        square.tagline = (string)s["viewerSquare"]["square"]["profile"]["tagline"];
+                        square.description = (string)s["viewerSquare"]["square"]["profile"]["aboutText"];
+                        square.avatar = "https:" + (string)s["viewerSquare"]["square"]["profile"]["photoUrl"];
+                        square.memberCount = (int)s["viewerSquare"]["squareMemberStats"]["memberCount"];
+                        squares.Add(square);
+                    }
                 }
+                catch { }
                 return squares;
             }
             else

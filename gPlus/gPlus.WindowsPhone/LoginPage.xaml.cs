@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,18 +38,44 @@ namespace gPlus
         /// This parameter is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            var username = ApplicationData.Current.LocalSettings.Values["username"];
+            var password = ApplicationData.Current.LocalSettings.Values["password"];
+            var token = ApplicationData.Current.LocalSettings.Values["token"];
+
+            if (token != null)
+                login((string)username, (string)password, (string)token);
+
+            if ((username != null) && (password != null))
+            {
+                usernameTextBox.Text = (string)username;
+                passwordBox.Password = (string)password;
+            }
+
         }
 
-        private async void AppBarButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private void AppBarButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            oAuth.setCredentials(usernameTextBox.Text, passwordBox.Password);
-            Other.info = await Other.getInfo();
-            if (Other.info != null)
-                this.Frame.Navigate(typeof(MainPage));
+            login(usernameTextBox.Text, passwordBox.Password, null);
+        }
+
+        private async void login(string username, string password, string token)
+        {
+            oAuth.setCredentials(username, password, token);
+            string result = await oAuth.GetAccessToken();
+            if (result.Contains("Continue"))
+            {
+                this.Frame.Navigate(typeof(_2StepPage), result);
+            }
             else
             {
-                var dialog = new MessageDialog("Cannot into. Contact with developer.");
-                await dialog.ShowAsync();
+                Other.info = await Other.getInfo();
+                if (Other.info != null)
+                    this.Frame.Navigate(typeof(MainPage));
+                else
+                {
+                    var dialog = new MessageDialog("Cannot into. Contact with developer.");
+                    await dialog.ShowAsync();
+                }
             }
         }
     }

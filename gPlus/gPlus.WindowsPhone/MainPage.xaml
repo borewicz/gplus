@@ -67,22 +67,25 @@
         </ResourceDictionary>
     </Page.Resources>
 	<Page.BottomAppBar>
-		<CommandBar>
-			<AppBarButton Icon="Edit" Label="new post" Click="AppBarButton_Click"/>
-			<AppBarButton x:Name="notificationAppBarButton" Label="notifications" Click="notificationAppBarButton_Click">
-				<AppBarButton.Icon>
-					<FontIcon Glyph="0"/>
-				</AppBarButton.Icon>
-			</AppBarButton>
-			<AppBarButton Icon="Find" Label="find" Click="AppBarButton_Click_1" />
-		</CommandBar>
-	</Page.BottomAppBar>
+        <CommandBar>
+        	<CommandBar.SecondaryCommands>
+        		<AppBarButton Label="sign out" Click="signOutClick" />
+        	</CommandBar.SecondaryCommands>
+            <AppBarButton Icon="Edit" Label="new post" Click="AppBarButton_Click"/>
+            <AppBarButton x:Name="notificationAppBarButton" Label="notifications" Click="notificationAppBarButton_Click">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="0"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton Icon="Find" Label="find" Click="AppBarButton_Click_1" />
+        </CommandBar>
+    </Page.BottomAppBar>
 
     <Grid x:Name="LayoutRoot">
         <Hub x:Name="Hub" x:Uid="Hub" Header="gPlus" Background="{ThemeResource HubBackgroundImageBrush}">
-            <HubSection x:Name="activityHub" x:Uid="HubSection1" Header="ACTIVITY" DataContext="{Binding Groups}" HeaderTemplate="{ThemeResource HubSectionHeaderTemplate}">
+            <HubSection x:Name="activityHub" x:Uid="HubSection1" Header="FAVOURITES" HeaderTemplate="{ThemeResource HubSectionHeaderTemplate}">
                 <DataTemplate>
-                    <ListView
+                    <!--<ListView
                         ItemsSource="{Binding}"
                         IsItemClickEnabled="True"
                         
@@ -90,11 +93,11 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,0,0,27.5">
-                                    <!--<TextBlock Text="{Binding Title}" Style="{ThemeResource ListViewItemTextBlockStyle}" />-->
+                                    --><!--<TextBlock Text="{Binding Title}" Style="{ThemeResource ListViewItemTextBlockStyle}" />--><!--
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                    </ListView>
+                    </ListView>-->
                 </DataTemplate>
             </HubSection>
 

@@ -184,5 +184,10 @@ namespace gPlus
         {
             this.Frame.Navigate(typeof(NotificationsPage), null);
         }
+
+        private void signOutClick(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            oAuth.clearCredentials();
+        }
     }
 }
