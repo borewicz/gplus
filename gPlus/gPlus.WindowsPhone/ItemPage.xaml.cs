@@ -28,6 +28,7 @@ namespace gPlus
     {
         private readonly NavigationHelper navigationHelper;
         private readonly ObservableDictionary defaultViewModel = new ObservableDictionary();
+        Posts.Post post;
 
         public ItemPage()
         {
@@ -70,7 +71,7 @@ namespace gPlus
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             //var item = await SampleDataSource.GetItemAsync((string)e.NavigationParameter);
             string parameter = e.NavigationParameter as string;
-            var post = await Posts.GetActivity(parameter);
+            post = await Posts.GetActivity(parameter);
             this.DefaultViewModel["Item"] = post;
         }
 
@@ -112,5 +113,36 @@ namespace gPlus
         }
 
         #endregion
+
+        private async void AppBarToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            int result = await PostManagement.PlusOne(post.postID, !post.isPlusonedByViewer);
+            if (result == 0)
+                post.isPlusonedByViewer = true;
+            else
+                //tu error
+                (sender as AppBarToggleButton).IsChecked = false;
+        }
+
+        private async void AppBarToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            int result = await PostManagement.PlusOne(post.postID, !post.isPlusonedByViewer);
+            if (result == 0)
+                post.isPlusonedByViewer = false;
+            else
+                //tu error
+                (sender as AppBarToggleButton).IsChecked = true;
+        }
+
+        private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            int result = await Comments.PostComment(commentTextBox.Text, post.postID, Other.info.userID);
+            if (result == 0)
+            {
+                post = await Posts.GetActivity(post.postID);
+                this.DefaultViewModel["Item"] = post;
+            }
+            
+        }
     }
 }

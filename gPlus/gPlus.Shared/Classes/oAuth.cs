@@ -140,7 +140,7 @@ namespace gPlus.Classes
                     .ToDictionary(y => y[0], y => y[1]);
                 //return values["Auth"];
                 access_token = values["Auth"];
-                saveCredentials(access_token, password, token);
+                saveCredentials(username, password, token);
                 return access_token;
             }
             else
