@@ -144,5 +144,10 @@ namespace gPlus
             }
             
         }
+
+        private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(NewPost), post.postID);
+        }
     }
 }

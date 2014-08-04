@@ -119,6 +119,10 @@ namespace gPlus
             emoticons.Add("valentines_day");
             emoticons.Add("st_paddys_day");
             emoticons.Add("spring");
+            if (reshareId != null)
+            {
+                moodButton.IsEnabled = linkButton.IsEnabled = cameraButton.IsEnabled = locationCheckBox.IsEnabled = false;
+            }
             //emoticonsComboBox.ItemsSource = emoticons;
         }
 

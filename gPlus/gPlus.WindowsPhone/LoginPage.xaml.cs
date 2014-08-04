@@ -62,20 +62,30 @@ namespace gPlus
         {
             oAuth.setCredentials(username, password, token);
             string result = await oAuth.GetAccessToken();
-            if (result.Contains("Continue"))
+            if (result != null)
             {
-                this.Frame.Navigate(typeof(_2StepPage), result);
+                if (result.Contains("Continue"))
+                {
+                    this.Frame.Navigate(typeof(_2StepPage), result);
+                }
+                else
+                {
+                    Other.info = await Other.getInfo();
+                    if (Other.info != null)
+                        this.Frame.Navigate(typeof(MainPage));
+                    /*
+                    else
+                    {
+                        var dialog = new MessageDialog("Cannot into. Contact with developer.");
+                        await dialog.ShowAsync();
+                    }
+                     */
+                }
             }
             else
             {
-                Other.info = await Other.getInfo();
-                if (Other.info != null)
-                    this.Frame.Navigate(typeof(MainPage));
-                else
-                {
-                    var dialog = new MessageDialog("Cannot into. Contact with developer.");
-                    await dialog.ShowAsync();
-                }
+                var dialog = new MessageDialog("Cannot into. Contact with developer.");
+                await dialog.ShowAsync();
             }
         }
     }

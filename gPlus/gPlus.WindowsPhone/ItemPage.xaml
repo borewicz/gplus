@@ -86,7 +86,7 @@
                 <AppBarButton Label="report"/>
             </CommandBar.SecondaryCommands>
             <AppBarToggleButton Label="+1" Icon="Add" Checked="AppBarToggleButton_Checked" Unchecked="AppBarToggleButton_Unchecked" IsChecked="{Binding isPlusonedByViewer}"/>
-            <AppBarButton Icon="ReShare" Label="reshare"/>
+            <AppBarButton Icon="ReShare" Label="reshare" Click="AppBarButton_Click_1"/>
         </CommandBar>
     </Page.BottomAppBar>
     <Page.Transitions>
