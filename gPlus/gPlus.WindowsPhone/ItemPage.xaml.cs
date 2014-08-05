@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Popups;
 
 // The Universal Hub Application project template is documented at http://go.microsoft.com/fwlink/?LinkID=391955
 
@@ -149,5 +150,173 @@ namespace gPlus
         {
             this.Frame.Navigate(typeof(NewPost), post.postID);
         }
+
+        private void StackPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);  
+        }
+
+        private async void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuFlyoutItem item = sender as MenuFlyoutItem;
+            //int result;
+            if (item != null)
+            {
+                Posts.Post.Comment comment = item.DataContext as Posts.Post.Comment;
+
+                if (comment != null)
+                {
+                    /*
+                     *                                             <MenuFlyoutItem Text="+1" Tag="+1" 
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click" />
+                                            <MenuFlyoutItem Text="reply" Tag="reply" 
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="edit" Tag="edit" 
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click" />
+                                            <MenuFlyoutItem Text="remove" Tag="remove" 
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click"/>
+                     */
+                    if (item.Tag.ToString() == "+1")
+                    {
+                        int result = await Comments.PlusOne(comment.commentID, !comment.isPlusonedByViewer);
+                        if (result == 0)
+                        {
+                            post = await Posts.GetActivity(post.postID);
+                            this.DefaultViewModel["Item"] = post;     
+                            //to potem się recznie zrobi
+                        }
+                    }
+                    else if (item.Tag.ToString() == "reply")
+                        commentTextBox.Text += "@" + comment.userID;                      
+                    else if (item.Tag.ToString() == "edit")
+                    {
+                        StackPanel panel = new StackPanel();
+                        TextBox box = new TextBox()
+                        {
+                            //Margin = new Thickness(0, 14, 0, -2)
+                            Text = comment.originalText
+                        };
+                        TextBlock block = new TextBlock()
+                        {
+                            Text = "Tap OK to continue."
+                        };
+
+                        panel.Children.Add(block);
+                        panel.Children.Add(box);
+                        var dlg = new ContentDialog()
+                        {
+                            Title = "Edit comment",
+                            Content = panel,
+                            PrimaryButtonText = "ok",
+                            SecondaryButtonText = "cancel"
+                        };
+
+                        var dlgResult = await dlg.ShowAsync();
+                        if (dlgResult == ContentDialogResult.Primary)
+                        {
+                            int result = await Comments.EditComment(box.Text, comment.commentID, post.postID);
+                            if (result == 0)
+                            {
+                                post = await Posts.GetActivity(post.postID);
+                                this.DefaultViewModel["Item"] = post;
+                            }
+                        }
+                    }
+                    else if (item.Tag.ToString() == "remove")
+                    {
+                        var dialog = new MessageDialog("", "");
+                        var dlg = new ContentDialog()
+                        {
+                            Title = "Warning",
+                            Content = "Do you really want to delete this comment?",
+                            PrimaryButtonText = "yes",
+                            SecondaryButtonText = "no"
+                        };
+                        var dlgResult = await dlg.ShowAsync();
+                        if (dlgResult == ContentDialogResult.Primary)
+                        {
+                            int result = await Comments.DeleteComment(comment.commentID);
+                            if (result == 0)
+                            {
+                                //post = await Posts.GetActivity(post.postID); //
+                                post.comments.Remove(comment);
+                                this.DefaultViewModel["Item"] = post;
+                            }
+                        }
+                    }
+                    //else img.Stretch = Stretch.Uniform;
+                }
+            }
+        }
+
+        private async void AppBarButton_Click_2(object sender, RoutedEventArgs e)
+        {
+            StackPanel panel = new StackPanel();
+            TextBox box = new TextBox()
+            {
+                //Margin = new Thickness(0, 14, 0, -2)
+                Text = post.content
+            };
+            TextBlock block = new TextBlock()
+            {
+                Text = "Tap OK to continue.",
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            panel.Children.Add(block);
+            panel.Children.Add(box);
+            var dlg = new ContentDialog()
+            {
+                Title = "Edit post",
+                Content = panel,
+                PrimaryButtonText = "ok",
+                SecondaryButtonText = "cancel"
+            };
+
+            var dlgResult = await dlg.ShowAsync();
+            if (dlgResult == ContentDialogResult.Primary)
+            {
+                int result = await PostManagement.EditActivity(post.postID, box.Text);
+                if (result == 0)
+                {
+                    post = await Posts.GetActivity(post.postID);
+                    this.DefaultViewModel["Item"] = post;
+                }
+            }
+        }
+
+        private async void AppBarButton_Click_3(object sender, RoutedEventArgs e)
+        {
+            var dialog = new MessageDialog("", "");
+            var dlg = new ContentDialog()
+            {
+                Title = "Warning",
+                Content = "Do you really want to delete this post?",
+                PrimaryButtonText = "yes",
+                SecondaryButtonText = "no"
+            };
+            var dlgResult = await dlg.ShowAsync();
+            if (dlgResult == ContentDialogResult.Primary)
+            {
+                int result = await PostManagement.DeleteActivity(post.postID);
+                if (result == 0)
+                {
+                    //post = await Posts.GetActivity(post.postID); //
+                    this.Frame.GoBack();
+                }
+            }
+        }
+
+        private async void AppBarButton_Click_4(object sender, RoutedEventArgs e)
+        {
+            int result = await PostManagement.ReportAbuse(post.postID);
+            if (result == 0)
+            {
+                MessageDialog dlg = new MessageDialog("Post successfully reported", "Success!");
+                await dlg.ShowAsync();
+                //post = await Posts.GetActivity(post.postID); //
+            }
+        }
+
     }
 }

@@ -31,6 +31,7 @@ namespace gPlus.Classes
             public class Comment {
                 public string author { get; set; }
                 public string text { get; set; }
+                public string originalText { get; set; }
                 public string time { get; set; }
                 public string avatar { get; set; }
                 public string commentID { get; set; }
@@ -72,8 +73,8 @@ namespace gPlus.Classes
             private Shared _shared = new Shared();
             public Shared shared { get { return _shared; } }
 
-            private List<Comment> _comments = new List<Comment>();
-            public List<Comment> comments { get { return _comments; } set { this._comments = value; } }
+            private ObservableCollection<Comment> _comments = new ObservableCollection<Comment>();
+            public ObservableCollection<Comment> comments { get { return _comments; } set { this._comments = value; } }
 
             private List<Photo> _photos = new List<Photo>();
             public List<Photo> photos { get { return _photos; } }
@@ -172,6 +173,7 @@ namespace gPlus.Classes
                 comment.userID = (string)c["obfuscatedId"];
                 comment.commentID = (string)c["commentId"];
                 comment.text = (string)c["text"];
+                comment.originalText = (string)c["originalText"];
                 comment.avatar = (string)c["authorPhotoUrl"];
                 comment.time = (string)c["timestamp"];
                 if (c["plusone"] != null)
@@ -274,21 +276,20 @@ namespace gPlus.Classes
             HttpContent content = new StringContent(postData);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(ACTIVITIES_API), content);
-            Debug.WriteLine(await response.Content.ReadAsStringAsync());
+            //Debug.WriteLine(await response.Content.ReadAsStringAsync());
             if (response.IsSuccessStatusCode == true)
             {
                 JObject result = JObject.Parse(await response.Content.ReadAsStringAsync());
-                foreach (var i in result["stream"]["update"])
+                if (result["stream"]["update"] != null)
                 {
-                    posts.posts.Add(_parsePost(i));
+                    foreach (var i in result["stream"]["update"])
+                    {
+                        posts.posts.Add(_parsePost(i));
+                    }
+                    posts.pageToken = (string)result["stream"]["continuationToken"];
                 }
-                posts.pageToken = (string)result["stream"]["continuationToken"];
-                return posts;                  
             }
-            else
-            {
-                return null;
-            }
+            return posts;                  
         }
 
         public static async Task<Post> GetActivity(string activityID)

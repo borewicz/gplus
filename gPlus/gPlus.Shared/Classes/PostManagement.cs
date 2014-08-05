@@ -19,6 +19,7 @@ namespace gPlus.Classes
         const string PLUSONE_API = "https://www.googleapis.com/plusi/v2/ozInternal/plusone";
         const string EDIT_ACTIVITY_API = "https://www.googleapis.com/plusi/v2/ozInternal/editactivity";
         const string DELETE_ACTIVITY_API = "https://www.googleapis.com/plusi/v2/ozInternal/deleteactivity";
+        const string REPORT_ABUSE_API = "https://www.googleapis.com/plusi/v2/ozInternal/reportabuseactivity";
 
         static JArray _getAclItems(List<AclItem> list)
         {
@@ -254,6 +255,24 @@ namespace gPlus.Classes
             HttpContent content = new StringContent(json.ToString());
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(PLUSONE_API), content);
+            Debug.WriteLine(await response.Content.ReadAsStringAsync());
+            if (response.IsSuccessStatusCode == true)
+                return 0;
+            else
+                return 1;
+        }
+
+        public static async Task<int> ReportAbuse(string activityID)
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
+            client.DefaultRequestHeaders.Add("User-Agent", "google-oauth-playground");
+            /*
+             * {"abuseReport":{"abuseType":"SPAM"},"isUndo":false,"itemId":["z131i3hxwzfqchzci23rxvfzawrkilo0x"]} */
+            //string postData = "{\"activityId\":\"" + activityID + "\"}"; 
+            HttpContent content = new StringContent("{\"abuseReport\":{\"abuseType\":\"SPAM\"},\"isUndo\":false,\"itemId\":[\"" + activityID + "\"]}");
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = await client.PostAsync(new Uri(REPORT_ABUSE_API), content);
             Debug.WriteLine(await response.Content.ReadAsStringAsync());
             if (response.IsSuccessStatusCode == true)
                 return 0;

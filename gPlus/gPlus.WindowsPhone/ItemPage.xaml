@@ -7,9 +7,11 @@
     xmlns:data="using:gPlus.Data"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:classes="using:gPlus.Classes"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
+        <classes:UserOptionsBoolConverter x:Key="UserOptionsBoolConverter" />
         <FontFamily x:Key="ContentControlThemeFontFamily">Segoe WP</FontFamily>
         <SolidColorBrush x:Key="AppBarItemBackgroundThemeBrush" Color="Transparent"/>
         <Style x:Key="AppBarButtonStyle1" TargetType="AppBarButton">
@@ -81,9 +83,9 @@
     <Page.BottomAppBar>
         <CommandBar>
             <CommandBar.SecondaryCommands>
-                <AppBarButton Label="edit"/>
-                <AppBarButton Label="remove"/>
-                <AppBarButton Label="report"/>
+                <AppBarButton Label="edit" IsEnabled="{Binding userID, Converter={StaticResource UserOptionsBoolConverter}}" Click="AppBarButton_Click_2"/>
+                <AppBarButton Label="remove" IsEnabled="{Binding userID, Converter={StaticResource UserOptionsBoolConverter}}" Click="AppBarButton_Click_3"/>
+                <AppBarButton Label="report" Click="AppBarButton_Click_4"/>
             </CommandBar.SecondaryCommands>
             <AppBarToggleButton Label="+1" Icon="Add" Checked="AppBarToggleButton_Checked" Unchecked="AppBarToggleButton_Unchecked" IsChecked="{Binding isPlusonedByViewer}"/>
             <AppBarButton Icon="ReShare" Label="reshare" Click="AppBarButton_Click_1"/>
@@ -149,7 +151,19 @@
             >
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel>
+                                <StackPanel Tapped="StackPanel_Tapped">
+                                    <FlyoutBase.AttachedFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="+1" Tag="+1" 
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click" />
+                                            <MenuFlyoutItem Text="reply" Tag="reply" 
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click"/>
+                                            <MenuFlyoutItem Text="edit" Tag="edit" IsEnabled="{Binding userID, Converter={StaticResource UserOptionsBoolConverter}}" 
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click" />
+                                            <MenuFlyoutItem Text="remove" Tag="remove" IsEnabled="{Binding userID, Converter={StaticResource UserOptionsBoolConverter}}"  
+                        DataContext="{Binding}" Click="MenuFlyoutItem_Click"/>
+                                        </MenuFlyout>
+                                    </FlyoutBase.AttachedFlyout>
                                     <StackPanel Orientation="Horizontal">
                                         <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,9.5,0,0" Width="79" Height="79">
                                             <Image Source="{Binding avatar}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
