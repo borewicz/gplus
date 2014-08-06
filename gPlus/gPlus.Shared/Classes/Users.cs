@@ -160,8 +160,11 @@ namespace gPlus.Classes
             user.avatarUrl = Other.parseLink((string)content["photoUrl"]);
             user.gender = (string)userData["gender"]["value"];
 
-            foreach (var nick in (JArray)userData["otherNames"]["name"])
-                user.nicks.Add((string)nick["value"]);
+            if (userData["otherNames"] != null)
+            {
+                foreach (var nick in (JArray)userData["otherNames"]["name"])
+                    user.nicks.Add((string)nick["value"]);
+            }
 
             user.occupation = (string)userData["occupation"]["value"];
             user.skills = (string)userData["skills"]["value"];
@@ -169,103 +172,119 @@ namespace gPlus.Classes
             user.tagline = (string)content["tagLine"]["value"];
             user.intro = (string)content["introduction"]["value"];
 
-            foreach (var employment in userData["employments"]["employment"])
+            if (userData["employments"] != null)
             {
-                User.HistoryElement element = new User.HistoryElement();
-                element.name = (string)employment["employer"];
-                element.title = (string)employment["title"];
-                if (employment["dateInfo"] != null)
+                foreach (var employment in userData["employments"]["employment"])
                 {
-                    if (employment["dateInfo"]["end"] != null)
-                        element.end = ((int)employment["dateInfo"]["end"]["day"]).ToString() + "-" +
-                            ((int)employment["dateInfo"]["end"]["month"]).ToString() + "-" +
-                            ((int)employment["dateInfo"]["end"]["year"]).ToString();
-                    if (employment["dateInfo"]["start"] != null)
-                        element.start = ((int)employment["dateInfo"]["start"]["day"]).ToString() + "-" +
-                            ((int)employment["dateInfo"]["start"]["month"]).ToString() + "-" +
-                            ((int)employment["dateInfo"]["start"]["year"]).ToString();
+                    User.HistoryElement element = new User.HistoryElement();
+                    element.name = (string)employment["employer"];
+                    element.title = (string)employment["title"];
+                    if (employment["dateInfo"] != null)
+                    {
+                        if (employment["dateInfo"]["end"] != null)
+                            element.end = //((int)employment["dateInfo"]["end"]["day"]).ToString() + "-" +
+                                //((int)employment["dateInfo"]["end"]["month"]).ToString() + "-" +
+                                ((int)employment["dateInfo"]["end"]["year"]).ToString();
+                        if (employment["dateInfo"]["start"] != null)
+                            element.start = //((int)employment["dateInfo"]["start"]["day"]).ToString() + "-" +
+                                //((int)employment["dateInfo"]["start"]["month"]).ToString() + "-" +
+                                ((int)employment["dateInfo"]["start"]["year"]).ToString();
+                    }
+                    element.description = (string)employment["description"];
+                    user.employment.Add(element);
                 }
-                element.description = (string)employment["description"];
-                user.employment.Add(element);
             }
 
-            foreach (var school in userData["educations"]["education"])
+            if (userData["educations"] != null)
             {
-                User.HistoryElement element = new User.HistoryElement();
-                element.name = (string)school["school"];
-                element.title = (string)school["majorConcentration"];
-                element.description = (string)school["description"];
-
-                if (school["dateInfo"] != null)
+                foreach (var school in userData["educations"]["education"])
                 {
-                    if (school["dateInfo"]["end"] != null)
-                        element.end = ((int)school["dateInfo"]["end"]["day"]).ToString() + "-" +
-                            ((int)school["dateInfo"]["end"]["month"]).ToString() + "-" +
-                            ((int)school["dateInfo"]["end"]["year"]).ToString();
-                    if (school["dateInfo"]["start"] != null)
-                        element.start = ((int)school["dateInfo"]["start"]["day"]).ToString() + "-" +
-                            ((int)school["dateInfo"]["start"]["month"]).ToString() + "-" +
-                            ((int)school["dateInfo"]["start"]["year"]).ToString();
+                    User.HistoryElement element = new User.HistoryElement();
+                    element.name = (string)school["school"];
+                    element.title = (string)school["majorConcentration"];
+                    element.description = (string)school["description"];
+
+                    if (school["dateInfo"] != null)
+                    {
+                        if (school["dateInfo"]["end"] != null)
+                            element.end = //((int)school["dateInfo"]["end"]["day"]).ToString() + "-" +
+                                //((int)school["dateInfo"]["end"]["month"]).ToString() + "-" +
+                                ((int)school["dateInfo"]["end"]["year"]).ToString();
+                        if (school["dateInfo"]["start"] != null)
+                            element.start = //((int)school["dateInfo"]["start"]["day"]).ToString() + "-" +
+                                //((int)school["dateInfo"]["start"]["month"]).ToString() + "-" +
+                                ((int)school["dateInfo"]["start"]["year"]).ToString();
+                    }
+                    user.education.Add(element);
+
                 }
-                user.education.Add(element);
-                
             }
 
             if (userData["locations"] != null)
             {
                 user.mapUrl = Other.parseLink((string)userData["locations"]["locationMapUrl"]);
                 user.currentLocation = (string)userData["locations"]["currentLocation"];
-                foreach (var other in userData["locations"]["otherLocation"])
-                    user.olderLocation.Add((string)other);
+                if (userData["locations"]["otherLocation"] != null)
+                {
+                    foreach (var other in userData["locations"]["otherLocation"])
+                        user.olderLocation.Add((string)other);
+                }
             }
 
-            foreach (var l in content["links"]["link"])
+            if (content["links"] != null)
             {
-                User.Link link = new User.Link();
-                link.link = (string)(l["normalizedUri"].First());
-                link.faviconUrl = Other.parseLink((string)l["faviconImgUrl"]);
-                link.label = (string)l["label"];
-                link.rel = (string)l["rel"];
-                //link.type = (string)l[]
-                switch ((string)l["type"])
+                foreach (var l in content["links"]["link"])
                 {
-                    case "ME" : user.links.Add(link);
-                        break;
-                    case "CONTRIBUTOR": user.contributeTo.Add(link);
-                        break;
-                    case "OTHER": user.otherProfiles.Add(link);
-                        break;    
+                    User.Link link = new User.Link();
+                    link.link = (string)(l["normalizedUri"].First());
+                    link.faviconUrl = Other.parseLink((string)l["faviconImgUrl"]);
+                    link.label = (string)l["label"];
+                    link.rel = (string)l["rel"];
+                    //link.type = (string)l[]
+                    switch ((string)l["type"])
+                    {
+                        case "ME": user.links.Add(link);
+                            break;
+                        case "CONTRIBUTOR": user.contributeTo.Add(link);
+                            break;
+                        case "OTHER": user.otherProfiles.Add(link);
+                            break;
+                    }
+                    user.otherProfiles.Add(link);
                 }
-                user.otherProfiles.Add(link);
             }
 
             user.backgroundUrl = (string)content["scrapbook"]["defaultCoverPhotoUrl"];
 
-            foreach (var item in content["contacts"]["phone"])
+            if (content["contacts"] != null)
             {
-                User.Contact contact = new User.Contact();
-                contact.value = (string)item["value"];
-                contact.type = (string)item["type"];
-                user.phone.Add(contact);
-            }
-            foreach (var item in content["contacts"]["address"])
-            {
-                User.Contact address = new User.Contact();
-                address.value = (string)item["value"];
-                user.address.Add(address);
-            }
-            foreach (var item in content["contacts"]["instantMessage"])
-            {
-                User.Contact im = new User.Contact();
-                im.value = (string)item["value"];
-                //contact.type = (string)item["type"];
-                im.protocol = (string)item["protocol"];
-                user.IM.Add(im);
+                if (content["contacts"]["phone"] != null) foreach (var item in content["contacts"]["phone"])
+                {
+                    User.Contact contact = new User.Contact();
+                    contact.value = (string)item["value"];
+                    contact.type = (string)item["type"];
+                    user.phone.Add(contact);
+                }
+
+                if (content["contacts"]["address"] != null) foreach (var item in content["contacts"]["address"])
+                {
+                    User.Contact address = new User.Contact();
+                    address.value = (string)item["value"];
+                    user.address.Add(address);
+                }
+                if (content["contacts"]["instantMessage"] != null) foreach (var item in content["contacts"]["instantMessage"])
+                {
+                    User.Contact im = new User.Contact();
+                    im.value = (string)item["value"];
+                    //contact.type = (string)item["type"];
+                    im.protocol = (string)item["protocol"];
+                    user.IM.Add(im);
+                }
             }
 
             user.relationship = (string)userData["relationshipStatus"]["value"];
 
-            foreach (var interest in userData["relationshipInterests"]["interest"])
+            if (userData["relationshipInterests"]["interest"] != null) foreach (var interest in userData["relationshipInterests"]["interest"])
                 user.lookingFor.Add((string)interest["value"]);
             return user;
         }

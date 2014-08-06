@@ -24,13 +24,13 @@ namespace gPlus
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class NotificationsPage : Page
+    public sealed partial class CategoriesPage : Page
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        Notifications.NotificationsList notifications;
+        string squareID;
 
-        public NotificationsPage()
+        public CategoriesPage()
         {
             this.InitializeComponent();
 
@@ -69,8 +69,14 @@ namespace gPlus
         /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            notifications = await Notifications.GetNotifications();
-            itemListView.ItemsSource = notifications.list;
+            string parameter = e.NavigationParameter as string;
+            squareID = parameter;
+            var categories = await Squares.GetCategories(parameter);
+            Squares.Square.Category cat = new Squares.Square.Category();
+            cat.id = null;
+            cat.name = "all";
+            categories.Insert(0, cat);
+            CategoriesListBox.ItemsSource = categories;
         }
 
         /// <summary>
@@ -112,38 +118,13 @@ namespace gPlus
 
         #endregion
 
-        private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+        private void CategoriesListBox_ItemClick(object sender, ItemClickEventArgs e)
         {
-            List<string> unread = new List<string>();
-            foreach (var item in notifications.list)
-            {
-                if (item.isRead == false)
-                    unread.Add(item.id);
-            }
-            if (unread.Count > 0)
-            {
-                int result1 = await Notifications.SetNotificationsReadState(notifications.lastReadTime, unread);
-                int result2 = await Notifications.UpdateLastReadTime(notifications.lastReadTime);
-                if ((result1 == 0) && (result2 == 0))
-                {
-                    foreach (var item in notifications.list)
-                    {
-                        if (item.isRead == false)
-                            item.isRead = true;
-                    }
-                }
-            }
-        }
-
-        private void itemListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var item = ((Notifications.Notification)e.ClickedItem);
-            if (item.communityID != null)
-                Frame.Navigate(typeof(PostsPage), "SQUARE:" + item.communityID);
-            else if (item.userID != null)
-                Frame.Navigate(typeof(Profile), item.userID);
-            else if (item.postID != null)
-                Frame.Navigate(typeof(ItemPage), item.postID);
+            var id = ((Squares.Square.Category)e.ClickedItem).id;
+            if (id != null)
+                this.Frame.Navigate(typeof(PostsPage), "SQUARE:" + squareID + ":" + id);
+            else
+                this.Frame.Navigate(typeof(PostsPage), "SQUARE:" + squareID);
         }
     }
 }

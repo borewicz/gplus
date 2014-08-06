@@ -139,7 +139,8 @@ namespace gPlus
         private void squaresItemClick(object sender, ItemClickEventArgs e)
         {
             var id = ((Squares.Square)e.ClickedItem).id;
-            this.Frame.Navigate(typeof(PostsPage), "SQUARE:" + id);
+            //this.Frame.Navigate(typeof(PostsPage), "SQUARE:" + id);
+            this.Frame.Navigate(typeof(CategoriesPage), id);
         }
 
 

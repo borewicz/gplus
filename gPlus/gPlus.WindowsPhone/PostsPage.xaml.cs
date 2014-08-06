@@ -75,15 +75,20 @@ namespace gPlus
             string parameter = e.NavigationParameter as string;
             if (parameter.Contains(":"))
             {
-                string id = (e.NavigationParameter as string).Split(':')[1];
-
-                if (parameter.Split(':')[0] == "SQUARE")
-                    posts = await Posts.GetActivities(null, null, parameter.Split(':')[1]);
-                else if (parameter.Split(':')[0] == "USER")
-                    posts = await Posts.GetActivities(parameter.Split(':')[1], null, null);
+                //string id = (e.NavigationParameter as string).Split(':')[1];
+                var param = parameter.Split(':');
+                if (param[0] == "SQUARE")
+                {
+                    if (param.Length > 2)
+                        posts = await Posts.GetActivities(null, null, parameter.Split(':')[1], parameter.Split(':')[2]);
+                    else
+                        posts = await Posts.GetActivities(null, null, parameter.Split(':')[1], null);
+                }
+                else if (param[0] == "USER")
+                    posts = await Posts.GetActivities(parameter.Split(':')[1], null, null, null);
             }
             else
-                posts = await Posts.GetActivities(null, parameter, null);
+                posts = await Posts.GetActivities(null, parameter, null, null);
             this.DefaultViewModel["Items"] = posts.posts;
 
         }
@@ -141,5 +146,10 @@ namespace gPlus
         }
 
         #endregion
+
+        private void StackPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Profile), (string)(sender as StackPanel).Tag);
+        }
     }
 }

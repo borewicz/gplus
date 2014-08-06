@@ -117,7 +117,6 @@ namespace gPlus.Classes
             HttpContent content = new StringContent(postData);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(NOTIFICATION_API), content);
-            Debug.WriteLine(await response.Content.ReadAsStringAsync());
             if (response.IsSuccessStatusCode == true)
             {
                 var result = JObject.Parse(await response.Content.ReadAsStringAsync());
@@ -134,7 +133,8 @@ namespace gPlus.Classes
                     {
                         case "STREAM": notification.postID = (string)i["entityReference"];
                             break;
-                        case "SQUARE": notification.communityID = (string)i["entityReference"];
+                        case "SQUARE": try { notification.communityID = (string)i["entityData"]["squares"]["subscription"].First()["square"]["oid"]; }
+                            catch { }
                             break;
                         case "CIRCLE": notification.userID = (string)i["entityReference"];
                             break;

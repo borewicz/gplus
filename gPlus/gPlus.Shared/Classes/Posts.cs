@@ -104,7 +104,7 @@ namespace gPlus.Classes
             public ObservableCollection<Post> posts { get; set; }
         }
 
-        static string returnRequestPost(string userID, string circleID, string squareID)
+        static string returnRequestPost(string userID, string circleID, string squareID, string categoriesID)
         {
             JObject json = new JObject(
                 new JProperty("skipPopularMixin", true),
@@ -123,6 +123,10 @@ namespace gPlus.Classes
             {
                 json["streamParams"]["productionStreamOid"] = squareID;
                 json["streamParams"]["viewType"] = "SQUARES";
+                if (categoriesID != null)
+                {
+                    json["streamParams"]["squareStreamId"] = categoriesID;
+                }
             }
             else if (circleID != null)
             {
@@ -264,7 +268,7 @@ namespace gPlus.Classes
             return post;
         }
 
-        public static async Task<PostStream> GetActivities(string userID, string circleID, string squareID)
+        public static async Task<PostStream> GetActivities(string userID, string circleID, string squareID, string categoryID)
         {
             PostStream posts = new PostStream();
             posts.posts = new ObservableCollection<Post>();
@@ -272,7 +276,7 @@ namespace gPlus.Classes
             client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
             //client.DefaultRequestHeaders.Add("User-Agent", "com.google.android.apps.plus/411514804 (Linux; U; Android 4.1.2; pl_PL; IdeaTabA1000L-F; Build/JZO54K); G+ SDK");
 
-            string postData = returnRequestPost(userID, circleID, squareID);
+            string postData = returnRequestPost(userID, circleID, squareID, categoryID);
             HttpContent content = new StringContent(postData);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(ACTIVITIES_API), content);

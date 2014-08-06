@@ -56,7 +56,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Tag="{Binding userID}" Orientation="Horizontal" Tapped="StackPanel_Tapped">
                             <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,9.5,0,0" Width="79" Height="79">
                                 <Image Source="{Binding avatar}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
                             </Border>
