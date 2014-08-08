@@ -109,7 +109,11 @@ namespace gPlus.Classes
             JObject json = new JObject(
                 new JProperty("skipPopularMixin", true),
                 new JProperty("streamParams", new JObject(
-                    new JProperty("sort", "LATEST")
+                    new JProperty("sort", "LATEST"),
+                    //new JProperty("collapserType", "MOBILE"),
+                    //new JProperty("skipCommentCollapsing", true),
+                    new JProperty("maxComments", 0)
+                    //new JProperty("maxNumUpdates", 0)
                 )
             ));
             //var extension1 = obj.SelectToken("extensions.settings.extension1") as JObject;
@@ -326,13 +330,9 @@ namespace gPlus.Classes
             client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
             //client.DefaultRequestHeaders.Add("User-Agent", "com.google.android.apps.plus/411514804 (Linux; U; Android 4.1.2; pl_PL; IdeaTabA1000L-F; Build/JZO54K); G+ SDK");
             JObject json = new JObject(
-                //new JProperty("activityRequestData", new JObject(
-                //    new JProperty("activityFilters", new JObject(
-                //        new JProperty("fieldRequestOptions", new JObject(
-                //            new JProperty("includeEmbedsData", true),
-                //            new JProperty("includeLegacyMediaData", false)
-                //        )),
-                        //new JProperty("skipCommentCollapsing", true)
+                new JProperty("activityRequestData", new JObject(
+                   new JProperty("activityFilters", new JObject(
+                          new JProperty("maxComments", 0)
 //                        new JProperty("updateFilter", new JObject(
 //                            new JProperty("includeNamespace", new JArray(
 //                                "STREAM",
@@ -346,13 +346,13 @@ namespace gPlus.Classes
 //]
 
 //                    )
-                //))),
+                )))),
                 new JProperty("searchQuery", new JObject(
                     new JProperty("sort", sort),
                     new JProperty("queryText", queryText),
                     new JProperty("filter", "TACOS")
-                )
-            ));
+                ))
+            );
             HttpContent content = new StringContent(json.ToString());
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(SEARCH_API), content);

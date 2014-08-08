@@ -86,6 +86,10 @@ namespace gPlus
                 }
                 else if (param[0] == "USER")
                     posts = await Posts.GetActivities(parameter.Split(':')[1], null, null, null);
+                else if (param[0] == "SEARCH")
+                {
+                    posts = await Posts.QueryPost(param[2], param[1]);
+                }
             }
             else
                 posts = await Posts.GetActivities(null, parameter, null, null);

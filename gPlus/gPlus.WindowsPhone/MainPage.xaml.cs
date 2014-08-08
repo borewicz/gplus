@@ -177,8 +177,61 @@ namespace gPlus
 
         private async void AppBarButton_Click_1(object sender, RoutedEventArgs e)
         {
-            var posts = await Posts.QueryPost("XD", "BEST");
-            Debug.WriteLine(posts);
+            StackPanel panel = new StackPanel();
+            TextBox box = new TextBox()
+            {
+                //Margin = new Thickness(0, 14, 0, -2)
+                //Text = comment.originalTex
+                PlaceholderText = "enter query"
+            };
+            TextBlock block = new TextBlock()
+            {
+                Text = "Type:"
+            };
+
+            RadioButton button1 = new RadioButton()
+            {
+                Content = "Recent",
+                IsChecked = true
+            };
+
+            RadioButton button2 = new RadioButton()
+            {
+                Content = "Best"
+            };
+
+            //panel.Children.Add(block);
+            panel.Children.Add(box);
+            panel.Children.Add(block);
+            panel.Children.Add(button1);
+            panel.Children.Add(button2);
+
+            var dlg = new ContentDialog()
+            {
+                Title = "Find posts",
+                Content = panel,
+                PrimaryButtonText = "search",
+                SecondaryButtonText = "cancel"
+            };
+
+            var dlgResult = await dlg.ShowAsync();
+            
+            if (dlgResult == ContentDialogResult.Primary)
+            {
+                if (button1.IsChecked == true)
+                    this.Frame.Navigate(typeof(PostsPage), "SEARCH:RECENT:" + box.Text);
+                else
+                    this.Frame.Navigate(typeof(PostsPage), "SEARCH:BEST:" + box.Text);
+                //int result = await Comments.EditComment(box.Text, comment.commentID, post.postID);
+                //if (result == 0)
+                //{
+                    //post = await Posts.GetActivity(post.postID);
+                    //this.DefaultViewModel["Item"] = post;
+                //}
+            }
+        //}
+            //var posts = await Posts.QueryPost("XD", "BEST");
+            //Debug.WriteLine(posts);
         }
 
         private void notificationAppBarButton_Click(object sender, RoutedEventArgs e)
