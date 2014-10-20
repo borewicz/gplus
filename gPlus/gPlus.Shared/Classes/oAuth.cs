@@ -134,6 +134,17 @@ namespace gPlus.Classes
             if (response.IsSuccessStatusCode == true)
             {
                 string result = await response.Content.ReadAsStringAsync();
+                foreach (var x in result.Split('\n'))
+                {
+                    //Debug.WriteLine(x);
+                    if (x.Split(new char[] { '=' }, 2)[0] == "Auth")
+                    {
+                        access_token = x.Split(new char[] { '=' }, 2)[1];
+                        saveCredentials(username, password, token);
+                        return access_token;
+                    }
+                }
+                    /*
                 Dictionary<string, string> values =
                 result.Split('\n')
                     .Select(x => x.Split('='))
@@ -142,6 +153,8 @@ namespace gPlus.Classes
                 access_token = values["Auth"];
                 saveCredentials(username, password, token);
                 return access_token;
+                     */
+                return null;
             }
             else
                 return null;

@@ -24,6 +24,8 @@ namespace gPlus
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
+    /// 
+
     public sealed partial class App : Application
     {
 #if WINDOWS_PHONE_APP

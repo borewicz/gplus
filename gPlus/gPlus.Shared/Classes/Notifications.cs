@@ -77,7 +77,7 @@ namespace gPlus.Classes
                 return -1;
         }
 
-        public static async Task<int> SetNotificationsReadState(string lastReadTime, List<string> notificationIDs)
+        public static async Task<int> SetNotificationsReadState(Dictionary<string, string> notifications)
         {
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
@@ -88,11 +88,11 @@ namespace gPlus.Classes
                     new JProperty("notificationToSet", new JArray())
                 )
             ));
-            foreach (var s in notificationIDs)
+            foreach (var s in notifications)
             {
                 JObject item = new JObject(
-                    new JProperty("key", s),
-                    new JProperty("latestVersion", lastReadTime)
+                    new JProperty("key", s.Key),
+                    new JProperty("latestVersion", s.Value)
                     );
                 ((JArray)json["setReadStatesParam"]["notificationToSet"]).Add(item);
             }
@@ -126,6 +126,7 @@ namespace gPlus.Classes
                 {
                     Notification notification = new Notification();
                     notification.id = (string)i["id"];
+                    notification.timestamp = (string)i["timestamp"];
                     notification.title = (string)i["entityData"]["summarySnippet"]["heading"];
                     notification.description = (string)i["entityData"]["summarySnippet"]["description"];
                     notification.isRead = (bool)i["isRead"];

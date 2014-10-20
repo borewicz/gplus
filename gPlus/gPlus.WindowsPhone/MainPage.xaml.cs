@@ -78,6 +78,8 @@ namespace gPlus
         /// session.  The state will be null the first time a page is visited.</param>
         private async void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            //if (Frame.BackStack.Count != 0 && Frame.BackStack.First().SourcePageType == typeof(LoginPage))
+            //    Frame.BackStack.Remove(Frame.BackStack.First());
             // TODO: Create an appropriate data model for your problem domain to replace the sample data
             //var sampleDataGroups = await SampleDataSource.GetGroupsAsync();
             //this.DefaultViewModel["Groups"] = sampleDataGroups;

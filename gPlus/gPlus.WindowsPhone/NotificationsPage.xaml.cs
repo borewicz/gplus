@@ -114,17 +114,18 @@ namespace gPlus
 
         private async void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            List<string> unread = new List<string>();
+            Dictionary<string, string> unread = new Dictionary<string, string>();
             foreach (var item in notifications.list)
             {
                 if (item.isRead == false)
-                    unread.Add(item.id);
+                    unread.Add(item.id, item.timestamp);
             }
             if (unread.Count > 0)
             {
-                int result1 = await Notifications.SetNotificationsReadState(notifications.lastReadTime, unread);
-                int result2 = await Notifications.UpdateLastReadTime(notifications.lastReadTime);
-                if ((result1 == 0) && (result2 == 0))
+                int result1 = await Notifications.SetNotificationsReadState(unread);
+                //Other.getTicks().ToString();
+                //int result2 = await Notifications.UpdateLastReadTime(Other.getTicks().ToString());
+                if ((result1 == 0))
                 {
                     foreach (var item in notifications.list)
                     {
