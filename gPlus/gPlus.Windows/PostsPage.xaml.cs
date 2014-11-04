@@ -74,12 +74,12 @@ namespace gPlus
                 string id = (e.NavigationParameter as string).Split(':')[1];
 
                 if (parameter.Split(':')[0] == "SQUARE")
-                    posts = await Posts.GetActivities(null, null, parameter.Split(':')[1]);
+                    posts = await Posts.GetActivities(null, null, parameter.Split(':')[1], null);
                 else if (parameter.Split(':')[0] == "USER")
-                    posts = await Posts.GetActivities(parameter.Split(':')[1], null, null);
+                    posts = await Posts.GetActivities(parameter.Split(':')[1], null, null, null);
             }
             else
-                posts = await Posts.GetActivities(null, parameter, null);
+                posts = await Posts.GetActivities(null, parameter, null, null);
             this.DefaultViewModel["Items"] = posts.posts;
             // TODO: Assign a bindable group to this.DefaultViewModel["Group"]
             // TODO: Assign a collection of bindable items to this.DefaultViewModel["Items"]

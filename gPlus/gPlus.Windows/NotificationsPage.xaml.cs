@@ -68,7 +68,7 @@ namespace gPlus
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
             var notifications = await Notifications.GetNotifications();
-            itemGridView.ItemsSource = notifications;
+            itemGridView.ItemsSource = notifications.list;
         }
 
         /// <summary>

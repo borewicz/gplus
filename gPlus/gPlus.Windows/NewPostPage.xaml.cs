@@ -135,7 +135,7 @@ namespace gPlus
             }
             //var id = ((Circles.Circle)aclListBox.SelectedItem).id;
             string emoticon = (string)emoticonsComboBox.SelectedItem;
-            var result = await PostManagement.PostActivity(contentTextBox.Text, items, linkTextBox.Text, emoticon, reshareId, await Location.GetYourLocation());
+            //var result = await PostManagement.PostActivity(contentTextBox.Text, items, linkTextBox.Text, emoticon, reshareId, await Location.GetYourLocation());
         }
 
         private async void squaresListBox_SelectionChanged(object sender, Windows.UI.Xaml.Controls.SelectionChangedEventArgs e)

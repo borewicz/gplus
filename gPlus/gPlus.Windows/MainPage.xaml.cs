@@ -60,7 +60,7 @@ namespace gPlus
 
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            var posts = await Posts.GetActivities(null, null, null);
+            var posts = await Posts.GetActivities(null, null, null, null);
             FontIcon icon = new FontIcon();
             icon.Glyph = (await Notifications.GetNotificationCount()).ToString();
             notificationAppBarButton.Icon = icon;
