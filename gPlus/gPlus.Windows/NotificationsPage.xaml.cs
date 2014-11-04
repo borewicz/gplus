@@ -27,6 +27,7 @@ namespace gPlus
 
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
+        private Notifications.NotificationsList notifications;
 
         /// <summary>
         /// This can be changed to a strongly typed view model.
@@ -67,7 +68,7 @@ namespace gPlus
         /// session. The state will be null the first time a page is visited.</param>
         private async void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            var notifications = await Notifications.GetNotifications();
+            notifications = await Notifications.GetNotifications();
             itemGridView.ItemsSource = notifications.list;
         }
 
@@ -105,5 +106,41 @@ namespace gPlus
         }
 
         #endregion
+
+        private async void AppBarButton_Tapped(object sender, RoutedEventArgs e)
+        {
+            Dictionary<string, string> unread = new Dictionary<string, string>();
+            foreach (var item in notifications.list)
+            {
+                if (item.isRead == false)
+                    unread.Add(item.id, item.timestamp);
+            }
+            if (unread.Count > 0)
+            {
+                int result1 = await Notifications.SetNotificationsReadState(unread);
+                //Other.getTicks().ToString();
+                //int result2 = await Notifications.UpdateLastReadTime(Other.getTicks().ToString());
+                if ((result1 == 0))
+                {
+                    foreach (var item in notifications.list)
+                    {
+                        if (item.isRead == false)
+                            item.isRead = true;
+                    }
+                }
+                navigationHelper.GoBack();
+            }
+        }
+
+        private void itemListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = ((Notifications.Notification)e.ClickedItem);
+            if (item.communityID != null)
+                Frame.Navigate(typeof(PostsPage), "SQUARE:" + item.communityID);
+            //else if (item.userID != null)
+            //    Frame.Navigate(typeof(Profile), item.userID);
+            else if (item.postID != null)
+                Frame.Navigate(typeof(ItemPage), item.postID);
+        }
     }
 }
