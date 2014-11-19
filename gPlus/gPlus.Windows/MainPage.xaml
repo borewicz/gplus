@@ -35,42 +35,90 @@
                 <EntranceThemeTransition/>
             </TransitionCollection>
         </Grid.ChildrenTransitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="140"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <!-- Horizontal scrolling grid -->
-
-        <GridView
+        
+        <Hub >
+            <!-- Back button and page title -->
+            <Hub.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <!--<Button  x:Name="backButton" Style="{StaticResource NavigationBackButtonNormalStyle}"
+                            Margin="0,0,39,0" 
+                            VerticalAlignment="Top"
+                            Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
+                            AutomationProperties.Name="Back"
+                            AutomationProperties.AutomationId="BackButton"
+                            AutomationProperties.ItemType="Navigation Button"/>-->
+                    <TextBlock x:Name="pageTitle" x:Uid="Header" Text="application name" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
+                            VerticalAlignment="Top" IsHitTestVisible="false" TextWrapping="NoWrap" />
+                </Grid>
+            </Hub.Header>
+            <HubSection Width="780" Margin="0,0,80,0" x:Name="notificationsHub">
+                <HubSection.Background>
+                    <SolidColorBrush Color="Gray" />
+                </HubSection.Background>
+                <DataTemplate>
+                    <StackPanel>
+                        <ListView ItemsSource="{Binding list}">
+                            <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding title}" />
+                                    <TextBlock Text="{Binding description}" />
+                                </StackPanel>
+                            </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="What's new" x:Name="postsHub">
+                <DataTemplate>
+                    <GridView
             x:Name="itemGridView"
             AutomationProperties.AutomationId="ItemsGridView"
             AutomationProperties.Name="Items"
-            ItemsSource="{Binding Source={StaticResource itemsViewSource}}"
+            ItemsSource="{Binding posts}"
             TabIndex="1"
             Grid.RowSpan="2"
-            Padding="116,136,116,46"
             SelectionMode="None"
             IsSwipeEnabled="false" IsItemClickEnabled="True"
             ItemClick="itemGridView_ItemClick"
             >
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <Grid HorizontalAlignment="Left" Width="250" Height="250">
-                        <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                            <Image Source="{Binding avatar}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
-                        </Border>
-                        <StackPanel VerticalAlignment="Bottom" Background="{ThemeResource ListViewItemOverlayBackgroundThemeBrush}">
-                            <TextBlock Text="{Binding author}" Foreground="{ThemeResource ListViewItemOverlayForegroundThemeBrush}" Style="{StaticResource BaseTextBlockStyle}" Height="60" Margin="15,0,15,0" FontWeight="SemiBold"/>
-                            <TextBlock Text="{Binding content}" Foreground="{ThemeResource ListViewItemOverlaySecondaryForegroundThemeBrush}" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" Margin="15,0,15,10" FontSize="12"/>
-                        </StackPanel>
-                    </Grid>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Left" Width="400" Height="200">
+                                    <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                        <Image Source="{Binding avatar}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Bottom" Background="{ThemeResource ListViewItemOverlayBackgroundThemeBrush}">
+                                        <TextBlock Text="{Binding author}" Foreground="{ThemeResource ListViewItemOverlayForegroundThemeBrush}" Style="{StaticResource BaseTextBlockStyle}" Height="60" Margin="15,0,15,0" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding content}" Foreground="{ThemeResource ListViewItemOverlaySecondaryForegroundThemeBrush}" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" Margin="15,0,15,10" FontSize="12"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
                 </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
+            </HubSection>
+            <HubSection Header="Communities">
+                <DataTemplate>
+                    
+                </DataTemplate>
+            </HubSection>
+            <HubSection Header="Circles">
+                
+            </HubSection>
+        </Hub>
+
+        <!-- Horizontal scrolling grid -->
+
+
 
         <!-- Back button and page title -->
-        <Grid>
+        <!--<Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
@@ -83,7 +131,7 @@
                         AutomationProperties.ItemType="Navigation Button" Visibility="Collapsed"/>
             <TextBlock x:Name="pageTitle" Text="Stream" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
-        </Grid>
+        </Grid>-->
     </Grid>
 
 </Page>

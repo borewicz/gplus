@@ -64,7 +64,10 @@ namespace gPlus
             FontIcon icon = new FontIcon();
             icon.Glyph = (await Notifications.GetNotificationCount()).ToString();
             notificationAppBarButton.Icon = icon;
-            itemGridView.ItemsSource = posts.posts;
+            //itemGridView.ItemsSource = posts.posts;
+            postsHub.DataContext = posts;
+            var notifications = await Notifications.GetNotifications();
+            notificationsHub.DataContext = notifications;
         }
 
         private void AppBarButton_Tapped(object sender, TappedRoutedEventArgs e)

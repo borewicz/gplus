@@ -34,6 +34,11 @@ namespace gPlus.Classes
             public string lastReadTime, continuationToken;
         }
 
+        private static string superKonweterKurwo(string dubleFormat)
+        {
+            return dubleFormat.Replace("E+15", "").Replace(".", "") + "001";
+        }
+
         public static async Task<int> GetNotificationCount()
         {
             HttpClient client = new HttpClient();
@@ -126,7 +131,7 @@ namespace gPlus.Classes
                 {
                     Notification notification = new Notification();
                     notification.id = (string)i["id"];
-                    notification.timestamp = (string)i["timestamp"];
+                    notification.timestamp = superKonweterKurwo((string)i["timestamp"]);
                     notification.title = (string)i["entityData"]["summarySnippet"]["heading"];
                     notification.description = (string)i["entityData"]["summarySnippet"]["description"];
                     notification.isRead = (bool)i["isRead"];
