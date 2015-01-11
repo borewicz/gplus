@@ -84,6 +84,10 @@ namespace gPlus.Classes
 
         public static async Task<int> SetNotificationsReadState(Dictionary<string, string> notifications)
         {
+            var epoch = Convert.ToString((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds).Replace(".", "") + "0";
+            await UpdateLastReadTime(epoch);
+
+
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
             client.DefaultRequestHeaders.Add("User-Agent", "google-oauth-playground");
@@ -97,7 +101,7 @@ namespace gPlus.Classes
             {
                 JObject item = new JObject(
                     new JProperty("key", s.Key),
-                    new JProperty("latestVersion", s.Value)
+                    new JProperty("latestVersion", epoch)
                     );
                 ((JArray)json["setReadStatesParam"]["notificationToSet"]).Add(item);
             }
