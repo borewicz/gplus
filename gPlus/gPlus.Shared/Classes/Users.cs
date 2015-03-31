@@ -75,7 +75,7 @@ namespace gPlus.Classes
                 public string label { get; set; }
                 public string rel { get; set; }
             }
-            public struct Follower { public string id, name, avatar; }
+            //public struct Follower { public string id, name, avatar; }
             /*
             public class Contact
             {
@@ -89,7 +89,7 @@ namespace gPlus.Classes
             }
              */
             //basic
-            public string userId, profileUrl;
+            public string userId;//, profileUrl;
             public string name { get; set; }
             public string given { get; set; }
             public string family { get; set; }

@@ -84,7 +84,7 @@ namespace gPlus
                 //httpRequestMessage.
                 webView.NavigateWithHttpRequestMessage(httpRequestMessage);
             }
-            catch (Exception oEx)
+            catch
             {
                 // handle exception
             }
@@ -160,7 +160,6 @@ namespace gPlus
                     var dialog = new MessageDialog("Cannot into. Contact with developer.");
                     await dialog.ShowAsync();
                 }
-                string dupa = null;
                 /*
                 if (response.IsSuccessStatusCode == true)
                 {

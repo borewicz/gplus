@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -31,6 +32,7 @@ namespace gPlus
             this.InitializeComponent();
         }
 
+        ShareOperation operation = null;
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
         /// </summary>
@@ -38,6 +40,17 @@ namespace gPlus
         /// This parameter is typically used to configure the page.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            if (e.Parameter != null)
+            {
+                try
+                {
+                    operation = (ShareOperation)e.Parameter;
+                }
+                catch
+                {
+                    operation = null;
+                }
+            }
             var username = ApplicationData.Current.LocalSettings.Values["username"];
             var password = ApplicationData.Current.LocalSettings.Values["password"];
             var token = ApplicationData.Current.LocalSettings.Values["token"];
@@ -72,7 +85,12 @@ namespace gPlus
                 {
                     Other.info = await Other.getInfo();
                     if (Other.info != null)
-                        this.Frame.Navigate(typeof(MainPage));
+                    {
+                        if (operation == null)
+                            this.Frame.Navigate(typeof(MainPage));
+                        else
+                            this.Frame.Navigate(typeof(NewPost), operation);
+                    }
                     /*
                     else
                     {

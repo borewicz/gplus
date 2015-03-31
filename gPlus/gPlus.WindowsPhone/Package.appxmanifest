@@ -21,6 +21,15 @@
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" />
       </m3:VisualElements>
+      <Extensions>
+        <Extension Category="windows.shareTarget">
+          <ShareTarget m2:Description="gPlus">
+            <DataFormat>URI</DataFormat>
+            <DataFormat>Text</DataFormat>
+            <DataFormat>Bitmap</DataFormat>
+          </ShareTarget>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using gPlus.Common;
+using Windows.UI.Popups;
 
 // The Universal Hub Application project template is documented at http://go.microsoft.com/fwlink/?LinkID=391955
 
@@ -165,6 +166,38 @@ namespace gPlus
                 // Call ContinuationManager to handle continuation activation
                 continuationManager.Continue(continuationEventArgs, frame);
             }
+        }
+
+        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            /*
+             * Line 1: this extracts the data we want from the shared data bundle (ShareOperation.Data) 
+             * sent to our app. In this example we knew we could only receive a hyperlink, so we just went and 
+             * extracted a hyperlink. You can alternately use ShareOperation.Data.Contains() to determine 
+             * if the data you want is present (e.g. if your app can receive different data types).
+             */
+
+            Frame frame = Window.Current.Content as Frame;
+
+            if (frame == null)
+            {
+                frame = new Frame();
+                Window.Current.Content = frame;
+            }
+
+            if (frame.Content == null)
+                frame.Navigate(typeof(LoginPage), args.ShareOperation);
+
+            Window.Current.Activate();
+
+            /*
+            var link = args.ShareOperation.Data.GetWebLinkAsync().GetResults();
+            //Frame rootFrame = Window.Current.Content as Frame;
+            //rootFrame.Navigate(typeof(NewPost), null);
+            MessageDialog messageDialog = new MessageDialog(link.ToString());
+            await messageDialog.ShowAsync();
+            args.ShareOperation.ReportCompleted();
+             */
         }
 #endif  
     }

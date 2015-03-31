@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
@@ -40,6 +42,7 @@ namespace gPlus
         Location.Place place;
         ObservableCollection<string> emoticons;
         List<AclItem> items, selectedItems;
+        ShareOperation operation;
         //string imageContent;
 
         public NewPost()
@@ -119,9 +122,18 @@ namespace gPlus
             emoticons.Add("valentines_day");
             emoticons.Add("st_paddys_day");
             emoticons.Add("spring");
-            if (reshareId != null)
+            if (reshareId != null || e.NavigationParameter != null)
             {
+                /*
+                 * Line 1: this extracts the data we want from the shared data bundle (ShareOperation.Data) 
+                 * sent to our app. In this example we knew we could only receive a hyperlink, so we just went 
+                 * and extracted a hyperlink. You can alternately use ShareOperation.Data.Contains() to determine 
+                 * if the data you want is present (e.g. if your app can receive different data types).
+                 */
                 moodButton.IsEnabled = linkButton.IsEnabled = cameraButton.IsEnabled = locationCheckBox.IsEnabled = false;
+                operation = (ShareOperation)e.NavigationParameter;
+                if (operation.Data.Contains(StandardDataFormats.WebLink))
+                    link = operation.Data.GetWebLinkAsync().GetResults().ToString();
             }
             //emoticonsComboBox.ItemsSource = emoticons;
         }
@@ -205,6 +217,8 @@ namespace gPlus
             var result = await PostManagement.PostActivity(contentTextBox.Text, selectedItems, link, selectedEmoticon, reshareId, place, imageContent);
             if (result == 0)
             {
+                if (operation != null)
+                    operation.ReportCompleted();
                 if (this.Frame.CanGoBack)
                 {
                     this.Frame.GoBack();

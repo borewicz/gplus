@@ -177,12 +177,12 @@ namespace gPlus.Classes
             foreach (var c in result["comment"])
             {
                 Post.Comment comment = new Post.Comment();
-                comment.author = (string)c["authorName"];
+                comment.author = (string)c["author"]["userName"];
                 comment.userID = (string)c["obfuscatedId"];
                 comment.commentID = (string)c["commentId"];
                 comment.text = (string)c["text"];
                 comment.originalText = (string)c["originalText"];
-                comment.avatar = (string)c["authorPhotoUrl"];
+                comment.avatar = (string)c["author"]["photoUrl"];
                 comment.time = (string)c["timestamp"];
                 if (c["plusone"] != null)
                 {
