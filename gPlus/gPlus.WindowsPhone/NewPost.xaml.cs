@@ -122,7 +122,7 @@ namespace gPlus
             emoticons.Add("valentines_day");
             emoticons.Add("st_paddys_day");
             emoticons.Add("spring");
-            if (reshareId != null || e.NavigationParameter != null)
+            if (reshareId != null)
             {
                 /*
                  * Line 1: this extracts the data we want from the shared data bundle (ShareOperation.Data) 
@@ -131,9 +131,27 @@ namespace gPlus
                  * if the data you want is present (e.g. if your app can receive different data types).
                  */
                 moodButton.IsEnabled = linkButton.IsEnabled = cameraButton.IsEnabled = locationCheckBox.IsEnabled = false;
+            }
+            if (e.NavigationParameter != null)
+            {
                 operation = (ShareOperation)e.NavigationParameter;
                 if (operation.Data.Contains(StandardDataFormats.WebLink))
+                {
                     link = operation.Data.GetWebLinkAsync().GetResults().ToString();
+                    moodButton.IsEnabled = linkButton.IsEnabled = cameraButton.IsEnabled = locationCheckBox.IsEnabled = false;
+                }
+                else if (operation.Data.Contains(StandardDataFormats.Text))
+                {
+                    contentTextBox.Text = operation.Data.GetTextAsync().GetResults().ToString();
+                }
+                else if (operation.Data.Contains(StandardDataFormats.StorageItems))
+                {
+                    var file = (StorageFile)(await operation.Data.GetStorageItemsAsync()).FirstOrDefault();
+                    imageContent = await Other.StorageFileToBase64(file);
+                    //BitmapImage img = new BitmapImage();
+                    //img.SetSource(await file.OpenReadAsync());
+                    //ImagePhoto.Source = img;
+                }
             }
             //emoticonsComboBox.ItemsSource = emoticons;
         }

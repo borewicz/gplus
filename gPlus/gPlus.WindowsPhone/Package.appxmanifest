@@ -24,9 +24,12 @@
       <Extensions>
         <Extension Category="windows.shareTarget">
           <ShareTarget m2:Description="gPlus">
+            <SupportedFileTypes>
+              <FileType>.jpg</FileType>
+              <FileType>.png</FileType>
+            </SupportedFileTypes>
             <DataFormat>URI</DataFormat>
             <DataFormat>Text</DataFormat>
-            <DataFormat>Bitmap</DataFormat>
           </ShareTarget>
         </Extension>
       </Extensions>
