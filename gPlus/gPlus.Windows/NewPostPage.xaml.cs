@@ -119,7 +119,7 @@ namespace gPlus
         }
 
 
-        private async void AppBarButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private void AppBarButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             List<AclItem> items = new List<AclItem>();
             if (toggleSwitch.IsOn)

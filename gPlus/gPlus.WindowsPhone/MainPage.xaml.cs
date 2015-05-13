@@ -2,6 +2,7 @@
 using gPlus.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,6 +35,7 @@ namespace gPlus
         private readonly NavigationHelper navigationHelper;
         private readonly ObservableDictionary defaultViewModel = new ObservableDictionary();
         private readonly ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView("Resources");
+        public ObservableCollection<Command> commands = new ObservableCollection<Command>();
 
         public MainPage()
         {
@@ -46,6 +49,10 @@ namespace gPlus
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
+
+            commands.Add(new Command("me", Other.info.userID, CommandType.USER));
+            commands.Add(new Command("Znajomi".ToLower(), "251e214c09316529", CommandType.CIRCLE));
+            commands.Add(new Command("all", null, CommandType.CIRCLE));
         }
 
         /// <summary>
@@ -96,6 +103,7 @@ namespace gPlus
             FontIcon icon = new FontIcon();
             icon.Glyph = (await Notifications.GetNotificationCount()).ToString();
             notificationAppBarButton.Icon = icon;
+            favouritesHub.DataContext = commands;
         }
 
         /// <summary>
@@ -245,5 +253,22 @@ namespace gPlus
         {
             oAuth.clearCredentials();
         }
+
+        private async void favoutitesItemClick(object sender, ItemClickEventArgs e)
+        {
+            var command = ((Command)e.ClickedItem);
+            switch (command.type)
+            {
+                case CommandType.USER: Frame.Navigate(typeof(Profile), command.arg);
+                    break;
+                case CommandType.CIRCLE: Frame.Navigate(typeof(PostsPage), command.arg);
+                    break;
+                default:
+                    MessageDialog msgbox = new MessageDialog("not implemented");
+                    await msgbox.ShowAsync();
+                    break;
+            }
+        }
+
     }
 }

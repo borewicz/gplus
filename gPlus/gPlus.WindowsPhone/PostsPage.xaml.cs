@@ -73,7 +73,7 @@ namespace gPlus
             // TODO: Create an appropriate data model for your problem domain to replace the sample data.
             posts = new Posts.PostStream();
             string parameter = e.NavigationParameter as string;
-            if (parameter.Contains(":"))
+            if (parameter != null && parameter.Contains(":"))
             {
                 //string id = (e.NavigationParameter as string).Split(':')[1];
                 var param = parameter.Split(':');

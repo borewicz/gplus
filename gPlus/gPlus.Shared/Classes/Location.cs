@@ -35,7 +35,7 @@ namespace gPlus.Classes
             client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
             client.DefaultRequestHeaders.Add("User-Agent", "google-oauth-playground");
 
-            string postData = "{\"latitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Latitude).Replace(".", null) + ",\"longitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Longitude).Replace(".", null) + ",\"precisionMeters\":46.39099884033203}";
+            string postData = "{\"latitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Point.Position.Latitude).Replace(".", null) + ",\"longitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Point.Position.Longitude).Replace(".", null) + ",\"precisionMeters\":46.39099884033203}";
             HttpContent content = new StringContent(postData);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(PLACES_API), content);
@@ -63,7 +63,7 @@ namespace gPlus.Classes
             client.DefaultRequestHeaders.Authorization = System.Net.Http.Headers.AuthenticationHeaderValue.Parse("Bearer " + await oAuth.GetAccessToken());
             client.DefaultRequestHeaders.Add("User-Agent", "google-oauth-playground");
 
-            string postData = "{\"latitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Latitude).Replace(".", null) + ",\"longitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Longitude).Replace(".", null) + ",\"precisionMeters\":46.39099884033203}";
+            string postData = "{\"latitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Point.Position.Latitude).Replace(".", null) + ",\"longitudeE7\":" + String.Format("{0:0.0000000}", location.Coordinate.Point.Position.Longitude).Replace(".", null) + ",\"precisionMeters\":46.39099884033203}";
             HttpContent content = new StringContent(postData);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             HttpResponseMessage response = await client.PostAsync(new Uri(PLACES_API), content);
